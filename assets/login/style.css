@@ -111,3 +111,18 @@ button[type="submit"]:active {
   transform: translateY(0);
 }
 
+.back-to-register {
+  text-align: center;
+  margin-top: 2.4rem;
+  font-size: 1.5rem;
+}
+
+.back-to-register a {
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-to-register a:hover {
+  text-decoration: underline;
+}
