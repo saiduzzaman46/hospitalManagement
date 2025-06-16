@@ -3,41 +3,303 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HMS Login</title>
-    <link rel="stylesheet" href="assets/login/style.css" />
+    <title>Welcome to MedCare Hospital - Your Health Partner</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
   </head>
   <body>
-    <div class="login-container">
-      <h2 class="title">Login</h2>
-
-      <form id="loginForm" onsubmit="return validateForm()" class="flex flex-col gap-4">
-        <div class="form-group">
-          <label for="username">Username / Email</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Enter your username or email"
-           
-          />
-          <p class="error"></p>
+    <header>
+      <div class="container">
+        <a href="#hero" class="logo">MedCare</a>
+        <nav>
+          <ul>
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#our-doctors">Our Doctors</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="nav-buttons">
+        
+          <a href="./login.html" class="button">Login</a>
+          <a href="#" class="button button-outline ">Register</a>
         </div>
+      </div>
+    </header>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-    
-          />
-          <p class="error"></p>
+    <main>
+      <section id="hero">
+        <div class="container">
+          <h1>Leading Healthcare, Compassionate Care.</h1>
+          <p class="hero-subtitle">
+            At MedCare Hospital, we are committed to delivering exceptional
+            healthcare experiences. Our integrated services, advanced
+            technology, and dedicated professionals ensure your well-being is
+            always our top priority.
+          </p>
+          <div class="hero-buttons">
+            <a href="#call-to-action" class="button">Book an Appointment</a>
+            <a href="#services" class="button button-outline">Our Services</a>
+          </div>
         </div>
+      </section>
 
-        <button type="submit">Login</button>
-      </form>
-    </div>
-    <script src="assets/login/script.js"></script>
+      <section id="about">
+        <div class="container">
+          <h2>Committed to Your Health and Well-being</h2>
+          <p>
+            MedCare Hospital stands as a beacon of health, providing
+            comprehensive medical services with a profound commitment to patient
+            care. Our philosophy centers on a holistic approach, addressing not
+            just physical ailments but also the emotional and psychological
+            needs of our patients.
+          </p>
+          <p>
+            We boast a cutting-edge infrastructure, encompassing advanced
+            diagnostic laboratories, modern operating theaters, and comfortable
+            patient rooms. Our team comprises board-certified physicians, highly
+            skilled nurses, and compassionate support staff, all working
+            synergistically to ensure optimal health outcomes. We are steadfast
+            in our pursuit of medical excellence, continuously integrating the
+            latest research and best practices into our daily operations.
+          </p>
+        </div>
+      </section>
+
+      <section id="services">
+        <div class="container">
+          <h2>Our Comprehensive Healthcare Services</h2>
+          <div class="service-grid">
+            <div class="service-card">
+              <i class="fas fa-calendar-check"></i>
+              <h3>Streamlined Online Appointments</h3>
+              <p>
+                Effortlessly schedule, manage, and view your medical
+                appointments through our intuitive online platform, designed for
+                your convenience.
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-user-md"></i>
+              <h3>World-Class Medical Specialists</h3>
+              <p>
+                Gain access to a diverse panel of highly experienced and
+                board-certified doctors across a wide spectrum of medical
+                disciplines.
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-notes-medical"></i>
+              <h3>Secure Digital Health Records</h3>
+              <p>
+                Your complete medical history, including prescriptions, test
+                results, and treatment plans, is securely accessible via your
+                personal patient portal.
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-hospital-alt"></i>
+              <h3>Advanced Diagnostic & Treatment</h3>
+              <p>
+                Benefit from our state-of-the-art diagnostic imaging, surgical
+                facilities, and treatment modalities that ensure precise and
+                effective care.
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-microscope"></i>
+              <h3>Specialized Laboratory Services</h3>
+              <p>
+                Our accredited laboratories offer a full range of tests,
+                providing accurate and timely results crucial for effective
+                patient management.
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-ambulance"></i>
+              <h3>Emergency and Critical Care</h3>
+              <p>
+                Equipped with dedicated emergency facilities and expert critical
+                care teams, we provide immediate and life-saving medical
+                attention 24/7.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="our-doctors">
+        <div class="container">
+          <h2>Meet Our Expert Doctors</h2>
+          <p>
+            Discover our team of highly skilled and compassionate medical
+            professionals ready to provide you with the best care.
+          </p>
+          <div class="doctor-grid">
+            <div class="doctor-card">
+              <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+              <h3>Dr. Emily Watson</h3>
+              <p class="doctor-specialty">Cardiologist</p>
+              <p>
+                Specializing in heart health, Dr. Watson provides expert care
+                for various cardiac conditions.
+              </p>
+              <a href="#" class="button">View Profile</a>
+            </div>
+            <div class="doctor-card">
+              <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+              <h3>Dr. John Smith</h3>
+              <p class="doctor-specialty">Pediatrician</p>
+              <p>
+                Dedicated to children's health, Dr. Smith ensures comprehensive
+                and gentle care for your little ones.
+              </p>
+              <a href="#" class="button">View Profile</a>
+            </div>
+            <div class="doctor-card">
+              <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+              <h3>Dr. Sarah Chen</h3>
+              <p class="doctor-specialty">Dermatologist</p>
+              <p>
+                Expert in skin conditions, Dr. Chen offers personalized
+                treatment plans for healthy and radiant skin.
+              </p>
+              <a href="#" class="button">View Profile</a>
+            </div>
+            <div class="doctor-card">
+              <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+              <h3>Dr. Michael Lee</h3>
+              <p class="doctor-specialty">Orthopedic Surgeon</p>
+              <p>
+                Specializing in bone and joint health, Dr. Lee provides advanced
+                surgical and non-surgical solutions.
+              </p>
+              <a href="#" class="button">View Profile</a>
+            </div>
+          </div>
+          <div style="margin-top: 4rem">
+            <a href="#call-to-action" class="button button-secondary">View All Doctors</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works">
+        <div class="container">
+          <h2>Navigating Our System: Roles and Responsibilities</h2>
+          <div class="role-explanation">
+            <div class="role-card">
+              <i class="fas fa-user-shield"></i>
+              <div>
+                <h3>For Hospital Administrators</h3>
+                <p>
+                  Admins are the backbone of our system, overseeing crucial
+                  operational aspects. This includes the secure **registration
+                  and management of doctor profiles**, updating hospital
+                  services, and maintaining the overall integrity and security
+                  of the digital platform. They ensure all systems run
+                  seamlessly for optimal patient care.
+                </p>
+              </div>
+            </div>
+            <div class="role-card">
+              <i class="fas fa-user-md"></i>
+              <div>
+                <h3>For Dedicated Doctors</h3>
+                <p>
+                  Once officially **onboarded by an Admin**, doctors utilize
+                  their personalized portal to efficiently manage their clinical
+                  practice. This includes scheduling and conducting
+                  appointments, securely accessing comprehensive patient medical
+                  records, documenting progress, and facilitating
+                  inter-departmental consultations. Our system empowers doctors
+                  to deliver focused, high-quality care.
+                </p>
+              </div>
+            </div>
+            <div class="role-card">
+              <i class="fas fa-procedures"></i>
+              <div>
+                <h3>For Valued Patients</h3>
+                <p>
+                  Patients are empowered to take an active role in their
+                  healthcare journey. You can **browse detailed profiles of our
+                  doctors** and their specialties. To **securely book an
+                  appointment and manage your health records**, a quick and easy
+                  **account creation is required**. Once registered, you gain
+                  full access to scheduling, viewing past visits, and accessing
+                  your health data anytime, anywhere.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="call-to-action">
+        <div class="container">
+          <h2>Ready to Experience Seamless Healthcare?</h2>
+          <p>
+            Whether you're seeking expert medical consultation, planning your
+            next appointment, or managing hospital operations, MedCare
+            Hospital's system offers an intuitive and secure platform designed
+            with your needs in mind.
+          </p>
+          <div class="cta-buttons">
+            <a href="./login.html" class="button button-secondary"
+              >Login to Your Account</a
+            >
+            <a href="#" class="button button-outline">Register for Access</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="container">
+          <h2>Connect With Us</h2>
+          <p>
+            We are here to assist you. Feel free to reach out to us through any
+            of the following channels.
+          </p>
+          <div class="contact-grid">
+            <div class="contact-info">
+              <i class="fas fa-map-marker-alt"></i>
+              <h3>Our Location</h3>
+              <p>123 Health Ave, Medical City</p>
+              <p>State, Zip Code, Country</p>
+            </div>
+            <div class="contact-info">
+              <i class="fas fa-phone-alt"></i>
+              <h3>Call Us</h3>
+              <p>+1 (555) 123-4567</p>
+              <p>+1 (555) 987-6543</p>
+            </div>
+            <div class="contact-info">
+              <i class="fas fa-envelope"></i>
+              <h3>Email Us</h3>
+              <p>info@medcarehospital.com</p>
+              <p>support@medcarehospital.com</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>
+          &copy; 2025 MedCare Hospital. All rights reserved. Designed for
+          optimal health management.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>
