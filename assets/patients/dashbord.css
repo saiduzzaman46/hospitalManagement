@@ -10,7 +10,8 @@ html {
   overflow-x: hidden;
   height: 100%; /* Ensure html and body take full height for sticky positioning */
 }
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -167,13 +168,33 @@ header .container {
   background-color: #ffffff;
   padding: 3.2rem;
   flex-shrink: 0;
+
   position: sticky; /* Make sidebar sticky */
-  top: calc(
-    var(--header-height) + var(--sticky-top-offset)
-  ); /* Stick below header + some offset */
-  max-height: 100vh; /* Allow sidebar to grow with content */
+  top: calc(var(--header-height) + var(--sticky-top-offset)); /* Stick below header + some offset */
+  max-height: calc(100vh - var(--header-height) - var(--footer-height)); /* Full height minus header and footer */
+  overflow-y: auto; /* Enable scrolling for sidebar content */
   /* overflow-y: scroll; Enable scrolling for sidebar content */
   transition: transform 0.3s ease-in-out; /* Smooth transition for mobile sidebar */
+}
+/* Custom scrollbar for sidebar */
+.sidebar.scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 #e0e7ff;
+}
+
+.sidebar.scroll-container::-webkit-scrollbar {
+  width: 0.8rem;
+  background: #e0e7ff;
+  border-radius: 0.8rem;
+}
+
+.sidebar.scroll-container::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 0.8rem;
+}
+
+.sidebar.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5;
 }
 
 .sidebar h3 {
@@ -219,18 +240,11 @@ header .container {
 }
 
 .content-display {
-
-  flex-grow: 1;
+  flex-grow: 2;
   padding: var(--main-padding-y) 2.4rem;
 }
 
-
-
 /* Hamburger menu icon for mobile */
-
-
-
-
 
 footer {
   background-color: #1e293b;
@@ -249,7 +263,6 @@ footer p {
   margin: 0;
   color: rgba(255, 255, 255, 0.7);
 }
-
 
 .dashboard-home .summary-cards {
   display: grid;
@@ -418,6 +431,10 @@ footer p {
 
 .profile-section .form-group {
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .profile-form-row {
@@ -429,6 +446,23 @@ footer p {
 .profile-form-row .form-group {
   flex: 1;
   min-width: calc(50% - 0.8rem);
+}
+.form-group label {
+  font-size: 1.6rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  font-size: 1.8rem;
+  color: #334155;
+  padding: 1rem 0.5rem;
+  border: none;
+  border-bottom: 1.5px solid #cccccc; /* or any color/width you like */
+  outline: none;
+  background: transparent; /* optional, for clean look */
 }
 
 .profile-action-buttons {

@@ -94,7 +94,6 @@ function filterDoctors() {
 document.addEventListener("DOMContentLoaded", () => {
   const menuItems = document.querySelectorAll(".sidebar-menu .menu-item");
   const sections = document.querySelectorAll(".dashboard-section");
-  const patientNamePlaceholder = document.querySelector(".patient-info span");
   const menuToggle = document.getElementById("menuToggle");
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
@@ -117,26 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const newPasswordInput = document.getElementById("newPassword");
   const confirmNewPasswordInput = document.getElementById("confirmNewPassword");
   const passwordMessageDiv = document.getElementById("passwordMessage");
-
-  const patientData = {
-    fullName: "Jane Doe",
-    email: "jane.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Patient Street, Health Town, USA",
-    gender: "female",
-    dob: "1990-01-01",
-  };
-
-  function populateProfileForm() {
-    profileNameInput.value = patientData.fullName;
-    profileEmailInput.value = patientData.email;
-    profilePhoneInput.value = patientData.phone;
-    profileAddressInput.value = patientData.address;
-    profileGenderSelect.value = patientData.gender;
-    profileDobInput.value = patientData.dob;
-  }
-
-  patientNamePlaceholder.textContent = `Welcome, ${patientData.fullName}!`;
 
   function closeSidebar() {
     sidebar.classList.remove("active");
@@ -261,14 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
       profileMessageDiv.style.display = "block";
       return;
     }
-
-    // Update dummy data
-    patientData.fullName = profileNameInput.value;
-    patientData.email = profileEmailInput.value;
-    patientData.phone = profilePhoneInput.value;
-    patientData.address = profileAddressInput.value;
-    patientData.gender = profileGenderSelect.value;
-    patientData.dob = profileDobInput.value;
 
     profileMessageDiv.textContent = "Profile updated successfully!";
     profileMessageDiv.className = "message-box message-success";

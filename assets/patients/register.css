@@ -28,8 +28,7 @@ body {
   background-color: #ffffff;
   padding: 1.2rem 3.4rem;
   border-radius: 1rem;
-  box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1),
-    0 0.4rem 0.6rem -0.2rem rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.6rem -0.2rem rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 70rem;
   display: flex;
@@ -62,12 +61,10 @@ body {
   flex-wrap: wrap;
 }
 
-
 .form-row .form-group {
   flex: 1;
   min-width: calc(50% - 0.8rem);
 }
-
 
 label {
   display: block;
@@ -107,7 +104,7 @@ textarea:focus {
   box-shadow: 0 0 0 0.3rem rgba(99, 102, 241, 0.2);
 }
 
-button[type="submit"] {
+input[type="submit"] {
   width: 100%;
   padding: 1.6rem;
   background-color: #6366f1;
@@ -120,14 +117,10 @@ button[type="submit"] {
   transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
 }
 
-button[type="submit"]:hover {
+input[type="submit"]:hover {
   background-color: #4f46e5;
 
-  box-shadow: 0 0.4rem 0.6rem -0.1rem rgba(0, 0, 0, 0.1),
-    0 0.2rem 0.4rem -0.1rem rgba(0, 0, 0, 0.06);
-}
-button[type="submit"]:active {
-  transform: translateY(0);
+  box-shadow: 0 0.4rem 0.6rem -0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.4rem -0.1rem rgba(0, 0, 0, 0.06);
 }
 
 #message {
