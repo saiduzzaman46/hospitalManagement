@@ -1,0 +1,687 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+  overflow-x: hidden;
+  height: 100%; /* Ensure html takes full height for sticky positioning */
+}
+
+/* Define CSS variables for consistent spacing and sizing */
+:root {
+  --header-height: 7.2rem; /* Approximate header height (logo + padding) */
+  --footer-height: 6.4rem; /* Approximate footer height (padding + text) */
+  --main-padding-y: 3.2rem; /* Vertical padding around the main content wrapper */
+  --sticky-top-offset: 1.6rem; /* Initial top offset for sticky elements after header */
+  --border-radius-base: 0.4rem; /* Smaller, more utilitarian border-radius */
+  --box-shadow-base: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.08); /* Lighter shadow */
+  --light-bg: #eef2f6; /* Lighter background for sections */
+  --border-color-light: #d1d5db; /* Light grey border color */
+  --primary-blue: #3b82f6;
+  --green-success: #10b981;
+  --red-error: #ef4444;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f1f5f9; /* Slightly more industrial background */
+  color: #334155;
+  line-height: 1.6;
+  font-size: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 120rem; /* Max width for content (1200px) */
+  margin: 0 auto;
+  padding: 0 2rem; /* 20px padding on sides */
+}
+
+h1,
+h2,
+h3 {
+  color: #1e293b;
+  margin-bottom: 1.6rem; /* 16px */
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 3.6rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2.8rem;
+  font-weight: 600;
+  margin-bottom: 2.4rem;
+}
+
+h3 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+}
+
+p {
+  margin-bottom: 1.6rem;
+}
+
+.button {
+  display: inline-block;
+  padding: 1rem 2rem; /* Slightly smaller padding */
+  background-color: var(--primary-blue); /* Blue for primary actions */
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius-base);
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  font-size: 1.5rem; /* Slightly smaller font */
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1); /* Consistent shadow for buttons */
+}
+
+.button:hover {
+  background-color: #2563eb; /* Darker blue */
+  transform: translateY(-0.1rem); /* Subtle lift */
+  box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.15);
+}
+
+.button-secondary {
+  background-color: var(--green-success); /* Green */
+}
+
+.button-secondary:hover {
+  background-color: #059669; /* Darker green */
+}
+
+.button-danger {
+  background-color: var(--red-error); /* Red */
+}
+.button-danger:hover {
+  background-color: #dc2626; /* Darker red */
+}
+
+.button-outline {
+  background-color: transparent;
+  border: 0.1rem solid var(--primary-blue);
+  color: var(--primary-blue);
+  box-shadow: none; /* No shadow for outline buttons */
+}
+.button-outline:hover {
+  background-color: #eff6ff; /* Light blue background on hover */
+  color: #2563eb;
+  transform: none; /* No lift */
+  box-shadow: none;
+}
+
+header {
+  background-color: #ffffff;
+  padding: 1.8rem 0; /* Slightly less padding */
+  box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.08); /* Lighter shadow */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: var(--header-height);
+  display: flex;
+  align-items: center;
+  border-bottom: 0.1rem solid var(--border-color-light); /* Added border */
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo {
+  font-size: 2.6rem; /* Slightly smaller logo */
+  font-weight: 700;
+  color: var(--primary-blue); /* Changed logo color */
+  text-decoration: none;
+}
+
+.doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; /* Smaller gap */
+  font-size: 1.6rem; /* Slightly smaller font */
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.doctor-info i {
+  font-size: 2rem; /* Slightly smaller icon */
+  color: var(--primary-blue);
+}
+
+.menu-toggle {
+  display: none;
+  font-size: 2.8rem;
+  color: var(--primary-blue); /* Changed color */
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: var(--main-padding-y) 0;
+  width: 100%;
+}
+
+.main-content-area {
+  display: flex;
+  gap: 2.4rem;
+  max-width: 120rem;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 25rem;
+  background-color: #ffffff;
+  border-radius: var(--border-radius-base); /* Smaller radius */
+  box-shadow: var(--box-shadow-base); /* Lighter shadow */
+  padding: 2rem; /* Slightly less padding */
+  flex-shrink: 0;
+  position: sticky;
+  top: var(--main-padding-y);
+  max-height: calc(100vh - var(--header-height) - var(--footer-height) - (2 * var(--main-padding-y)));
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  border: 0.1rem solid var(--border-color-light); /* Added border */
+}
+
+/* Custom scrollbar for WebKit browsers */
+.sidebar::-webkit-scrollbar,
+.content-display::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  /* Apply to general table containers */
+  width: 0.8rem;
+  height: 0.8rem; /* For horizontal scrollbar */
+}
+.sidebar::-webkit-scrollbar-track,
+.content-display::-webkit-scrollbar-track,
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0.4rem;
+}
+.sidebar::-webkit-scrollbar-thumb,
+.content-display::-webkit-scrollbar-thumb,
+.table-container::-webkit-scrollbar-thumb {
+  background: #a1a1aa; /* More neutral scrollbar */
+  border-radius: 0.4rem;
+}
+.sidebar::-webkit-scrollbar-thumb:hover,
+.content-display::-webkit-scrollbar-thumb:hover,
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+.sidebar h3 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem; /* Less margin */
+  color: #1e293b;
+}
+
+.sidebar-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem; /* Smaller gap */
+}
+
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Smaller gap */
+  padding: 1rem 1.4rem; /* Smaller padding */
+  text-decoration: none;
+  color: #4a5568;
+  font-size: 1.6rem; /* Slightly smaller font */
+  border-radius: var(--border-radius-base);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-menu li a:hover,
+.sidebar-menu li a.active {
+  background-color: #dbeafe; /* Lighter blue */
+  color: #1e40af; /* Darker blue text */
+  font-weight: 600;
+}
+
+.sidebar-menu li a i {
+  font-size: 1.8rem; /* Slightly smaller icon */
+  color: var(--primary-blue);
+}
+
+.sidebar-menu li a.active i {
+  color: #1e40af;
+}
+
+.content-display {
+  flex-grow: 1;
+  background-color: #ffffff;
+  border-radius: var(--border-radius-base); /* Smaller radius */
+  box-shadow: var(--box-shadow-base); /* Lighter shadow */
+  padding: 2.8rem; /* Slightly less padding */
+  max-height: calc(100vh - var(--header-height) - var(--footer-height) - (2 * var(--main-padding-y)));
+  overflow-y: auto;
+  border: 0.1rem solid var(--border-color-light); /* Added border */
+}
+
+footer {
+  background-color: #2f3e4e; /* Darker, more muted footer */
+  color: white;
+  padding: 3rem 0;
+  text-align: center;
+  font-size: 1.3rem; /* Slightly smaller font */
+  margin-top: auto;
+  min-height: var(--footer-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 0.1rem solid #4b5563; /* Added top border */
+}
+
+footer p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dashboard-home .summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  gap: 1.8rem; /* Smaller gap */
+  margin-top: 2rem; /* Less margin */
+}
+
+.dashboard-home .card {
+  background-color: var(--light-bg); /* Use light background variable */
+  padding: 1.8rem; /* Less padding */
+  border-radius: var(--border-radius-base);
+  text-align: center;
+  border-left: 0.4rem solid var(--primary-blue); /* Blue accent */
+  box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.05); /* Lighter shadow */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 0.1rem solid var(--border-color-light); /* Added border */
+}
+
+.dashboard-home .card h4 {
+  font-size: 1.8rem; /* Smaller font */
+  color: #1e293b;
+  margin-bottom: 0.6rem; /* Smaller margin */
+}
+
+.dashboard-home .card p {
+  font-size: 2.6rem; /* Slightly smaller number */
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 1.2rem; /* Smaller margin */
+}
+
+.dashboard-home .card .button {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0.7rem 1.4rem; /* Smaller button padding */
+  font-size: 1.4rem;
+}
+
+/* General Table Styling for Doctor View (used for both patients and appointments) */
+.table-container {
+  /* Renamed from patient-table-container to be generic */
+  background-color: #ffffff;
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-base);
+  overflow-x: auto; /* Allows horizontal scrolling for table on small screens */
+  margin-top: 2.4rem;
+  border: 0.1rem solid var(--border-color-light); /* Consistent border */
+}
+
+.data-table {
+  /* Renamed from patient-table to be generic */
+  width: 100%;
+  border-collapse: collapse; /* Removes space between borders */
+  text-align: left;
+  font-size: 1.4rem; /* Smaller table font */
+}
+
+.data-table th,
+.data-table td {
+  padding: 1rem 1.4rem; /* Padding for table cells */
+  border-bottom: 0.1rem solid #e5e7eb; /* Lighter border for rows */
+  white-space: nowrap; /* Prevent text wrapping in table cells by default */
+}
+
+.data-table th {
+  background-color: var(--light-bg); /* Use light background variable */
+  font-weight: 600;
+  color: #4b5563; /* Slightly darker text for headers */
+  text-transform: uppercase;
+  font-size: 1.3rem; /* Smaller header font */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.data-table .action-buttons {
+  display: flex;
+  gap: 0.6rem; /* Smaller gap */
+  justify-content: center;
+}
+
+.data-table .action-buttons .button {
+  padding: 0.5rem 1rem; /* Even smaller buttons */
+  font-size: 1.2rem;
+  box-shadow: none; /* No individual button shadows in table */
+}
+.data-table .action-buttons .button:hover {
+  transform: none; /* No lift on table buttons */
+}
+
+.patient-search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem; /* Smaller gap */
+  margin-bottom: 2.8rem; /* Less margin */
+  justify-content: flex-start; /* Align to left */
+  text-align: left;
+}
+
+.patient-search-controls .form-group {
+  flex: 1;
+  min-width: 20rem; /* Smaller min-width for mobile flexibility */
+}
+
+.patient-search-controls label {
+  margin-bottom: 0.6rem; /* Smaller margin */
+  font-size: 1.4rem; /* Smaller font */
+  display: block; /* Ensure label takes full width */
+  color: #4b5563;
+}
+
+.patient-search-controls input,
+.patient-search-controls select {
+  width: 100%;
+  padding: 0.8rem; /* Smaller padding */
+  border: 0.1rem solid var(--border-color-light); /* Lighter border */
+  border-radius: var(--border-radius-base);
+  font-size: 1.5rem;
+  color: #334155;
+  outline: none;
+  background-color: #ffffff; /* Explicitly white background */
+}
+.patient-search-controls input:focus,
+.patient-search-controls select:focus {
+  border-color: var(--primary-blue); /* Blue focus */
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2); /* Lighter focus shadow */
+}
+
+/* Profile Settings Specific Styles */
+.profile-section,
+.password-change-section {
+  background-color: var(--light-bg);
+  padding: 2.4rem; /* Consistent padding */
+  border-radius: var(--border-radius-base);
+  margin-top: 2rem;
+  text-align: left;
+  margin-bottom: 2rem; /* Consistent margin */
+  border: 0.1rem solid var(--border-color-light);
+  box-shadow: none; /* Remove shadows */
+}
+
+.profile-section h3,
+.password-change-section h3 {
+  margin-bottom: 1.5rem;
+  font-size: 2.2rem; /* Slightly smaller header */
+  border-bottom: 0.1rem solid #cbd5e0; /* Separator for sections */
+  padding-bottom: 1rem;
+}
+
+.profile-section .form-group,
+.password-change-section .form-group {
+  margin-bottom: 1.4rem; /* Smaller margin */
+}
+
+.profile-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+}
+
+.profile-form-row .form-group {
+  flex: 1;
+  min-width: calc(50% - 0.8rem);
+}
+
+.profile-action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.profile-action-buttons .button {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.5rem;
+}
+
+.message-box {
+  margin-top: 1.6rem;
+  padding: 1.2rem;
+  border-radius: var(--border-radius-base);
+  text-align: center;
+  font-weight: 500;
+  display: none;
+  font-size: 1.4rem;
+}
+
+.message-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 0.1rem solid #34d399;
+}
+
+.message-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 0.1rem solid #ef4444;
+}
+
+/* Prescriptions Section specific styles */
+#content-prescriptions h3 {
+  margin-bottom: 2rem;
+}
+#content-prescriptions .prescription-details {
+  background-color: var(--light-bg);
+  padding: 2rem;
+  border-radius: var(--border-radius-base);
+  border: 0.1rem solid var(--border-color-light);
+  margin-top: 2rem;
+}
+#content-prescriptions .prescription-details p {
+  margin-bottom: 1rem;
+}
+#content-prescriptions .prescription-details strong {
+  color: #1e293b;
+}
+#content-prescriptions .action-area {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+/* New Prescription Form styles */
+#content-add-prescription .form-section {
+  background-color: var(--light-bg);
+  padding: 2.4rem;
+  border-radius: var(--border-radius-base);
+  border: 0.1rem solid var(--border-color-light);
+}
+#content-add-prescription .form-group {
+  margin-bottom: 1.4rem;
+}
+#content-add-prescription .form-group label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 1.4rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+#content-add-prescription .form-group input,
+#content-add-prescription .form-group textarea,
+#content-add-prescription .form-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 0.1rem solid var(--border-color-light);
+  border-radius: var(--border-radius-base);
+  font-size: 1.5rem;
+  color: #334155;
+  outline: none;
+  background-color: #ffffff;
+}
+#content-add-prescription .form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+/* Mobile specific styles */
+@media (max-width: 992px) {
+  header .container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+  }
+
+  .menu-toggle {
+    display: block; /* Show hamburger icon */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -25rem; /* Hide sidebar off-screen initially */
+    height: 100vh; /* Full viewport height for sliding menu */
+    max-height: 100vh; /* Override max-height for mobile sidebar */
+    z-index: 1050; /* Above overlay */
+    box-shadow: 0.5rem 0 1.5rem rgba(0, 0, 0, 0.1);
+    padding-top: var(--header-height); /* Push content down from fixed header */
+    transform: translateX(0); /* Default hidden state (no transform) */
+  }
+
+  .sidebar.active {
+    transform: translateX(100%); /* Slide in effect */
+  }
+
+  .main-wrapper {
+    padding: 0; /* Remove vertical padding from main wrapper on mobile */
+  }
+
+  .main-content-area {
+    flex-direction: column;
+    padding: 2.4rem 2rem; /* Add padding directly to main-content-area */
+    gap: 0; /* Remove gap when stacked */
+  }
+
+  .content-display {
+    width: 100%;
+    padding: 2.4rem;
+    /* Remove max-height and overflow-y: auto for mobile content display
+                   as the entire body will scroll when sidebar is closed.
+                   Scroll will be handled by the main body. */
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040; /* Below sidebar, above content */
+  }
+  .overlay.active {
+    display: block;
+  }
+
+  .dashboard-home .summary-cards {
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  }
+
+  .patient-search-controls {
+    flex-direction: column;
+  }
+
+  .profile-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .profile-form-row .form-group {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 58%;
+  }
+
+  .doctor-info {
+    font-size: 1.6rem;
+  }
+
+  .doctor-info i {
+    font-size: 2rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  h2 {
+    font-size: 2.4rem;
+  }
+
+  /* On smaller screens, allow table to overflow horizontally */
+  .table-container {
+    /* Apply to general table containers */
+    overflow-x: auto;
+  }
+  /* .data-table th,
+  .data-table td {
+    Removed white-space: nowrap here to allow wrapping if desired on very small screens,
+                   but overflow-x: auto on container still ensures all content is visible.
+  } */
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 55%;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+  }
+}
