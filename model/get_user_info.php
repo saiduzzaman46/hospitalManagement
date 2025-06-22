@@ -21,7 +21,7 @@ function get_phone($conn, $phone)
 }
 function get_email_update($conn, $email, $excludeUserId)
 {
-    $query = "SELECT * FROM `patientsregister` WHERE `email` = '$email' AND `id` != '$excludeUserId';";
+    $query = "SELECT * FROM `patientsregister` WHERE `email` = '$email' AND `pid` != '$excludeUserId';";
     $result = mysqli_query($conn, $query);
     return (mysqli_num_rows($result) > 0);
 }
@@ -73,7 +73,7 @@ function get_role($conn, $phone)
 
 function get_user_info($conn, $user_ref_id)
 {
-    $query = "SELECT * FROM `patientsregister` WHERE `id` = '$user_ref_id';";
+    $query = "SELECT * FROM `patientsregister` WHERE `pid` = '$user_ref_id';";
     $result = mysqli_query($conn, $query);
     if ($result && mysqli_num_rows($result) > 0) {
         return mysqli_fetch_assoc($result);
@@ -100,6 +100,75 @@ function get_password_by_id($conn, $id, $password)
     if ($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         return $row['password'];
+    } else {
+        return false;
+    }
+}
+
+function get_last_pid($conn)
+{
+    $query = "SELECT `pid` FROM `patientsregister` ORDER BY `id` DESC LIMIT 1";
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return $row['pid'];
+    } else {
+        return false;
+    }
+}
+
+function get_last_did($conn)
+{
+    $query = "SELECT `did` FROM `doctorregister` ORDER BY `id` DESC LIMIT 1";
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return $row['did'];
+    } else {
+        return false;
+    }
+}
+
+function get_doctor_phone($conn, $phone)
+{
+    $query = "SELECT `phone` FROM `login` WHERE `phone` = '$phone'";
+    $result = mysqli_query($conn, $query);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function get_doctor_password($conn, $did, $password)
+{
+    $query = "SELECT * FROM `login` WHERE `user_ref_id` = '$did' AND `password` = '$password'";
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return $row['password'];
+    } else {
+        return false;
+    }
+}
+
+function get_doctor_email($conn, $email)
+{
+    $query = "SELECT `email` FROM `doctorregister` WHERE `email` = '$email'";
+    $result = mysqli_query($conn, $query);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+function get_doctor_info($conn, $did)
+{
+    $query = "SELECT * FROM `doctorregister` WHERE `did` = '$did'";
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
     } else {
         return false;
     }

@@ -12,9 +12,9 @@ if (isset($_COOKIE['user_id'])) {
   $user_info = get_user_info($conn, $user_id);
 
   if ($user_info) {
-    $id = $user_info['id'];
+    $id = $user_info['pid'];
     $fname = $user_info['fname'];
-    $phone = get_user_phone($conn, $user_info['id']);
+    $phone = get_user_phone($conn, $user_info['pid']);
     $email = $user_info['email'];
     $dob = $user_info['dob'];
     $gender = $user_info['gender'];
@@ -162,7 +162,7 @@ if (isset($_COOKIE['user_id'])) {
           <!-- <form id="profileForm" method="POST" action="../../controller/upddate_patients_con.php"> -->
 
           <form id="profileForm" onsubmit="return validateProfileForm()" method="POST" action="../../controller/upddate_patients_con.php">
-            <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>" />
+            <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($id); ?>" />
 
             <div class="profile-form-row">
               <div class="form-group">
@@ -212,29 +212,19 @@ if (isset($_COOKIE['user_id'])) {
           </form>
 
           <?php
-          if (isset($_SESSION['errorUpdate']['fullname'])) {
-            echo '<div id="profileMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorUpdate']['fullname']) . '</div>';
+          if (isset($_SESSION['errorUpdate']) && is_array($_SESSION['errorUpdate'])) {
+            foreach ($_SESSION['errorUpdate'] as $error) {
+              echo '<div class="message-box message-error">' . htmlspecialchars($error) . '</div>';
+            }
             unset($_SESSION['errorUpdate']);
-          } elseif (isset($_SESSION['errorUpdate']['email'])) {
-            echo '<div id="profileMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorUpdate']['email']) . '</div>';
-            unset($_SESSION['errorUpdate']);
-          } elseif (isset($_SESSION['errorUpdate']['dob'])) {
-            echo '<div id="profileMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorUpdate']['dob']) . '</div>';
-            unset($_SESSION['errorUpdate']);
-          } elseif (isset($_SESSION['errorUpdate']['address'])) {
-            echo '<div id="profileMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorUpdate']['address']) . '</div>';
-            unset($_SESSION['errorUpdate']);
-          } elseif (isset($_SESSION['errorUpdate']['phone'])) {
-            echo '<div id="profileMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorUpdate']['phone']) . '</div>';
-            unset($_SESSION['errorUpdate']);
-          } elseif (isset($_SESSION['errorUpdate']['gender'])) {
-            echo '<div id="profileMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorUpdate']['gender']) . '</div>';
-            unset($_SESSION['errorUpdate']);
-          } elseif (isset($_SESSION['successUpdate'])) { 
-            echo '<div id="profileMessage" class="message-box message-success">' . htmlspecialchars($_SESSION['successUpdate']) . '</div>';
+          }
+
+          if (isset($_SESSION['successUpdate'])) {
+            echo '<div class="message-box message-success">' . htmlspecialchars($_SESSION['successUpdate']) . '</div>';
             unset($_SESSION['successUpdate']);
           }
           ?>
+
 
           <!-- <div id="profileMessage" class="message-box"></div> -->
 
@@ -256,20 +246,14 @@ if (isset($_COOKIE['user_id'])) {
               <button type="submit" class="button">Change Password</button>
             </form>
             <?php
-            if (isset($_SESSION['errorPassChange']['currentPassword'])) {
-              echo '<div id="passwordMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorPassChange']['currentPassword']) . '</div>';
-              unset($_SESSION['errorPassChange']);
-            } elseif (isset($_SESSION['errorPassChange']['newPassword'])) {
-              echo '<div id="passwordMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorPassChange']['newPassword']) . '</div>';
-              unset($_SESSION['errorPassChange']);
-            } elseif (isset($_SESSION['errorPassChange']['confirmNewPassword'])) {
-              echo '<div id="passwordMessage" class="message-box message-error">' . htmlspecialchars($_SESSION['errorPassChange']['confirmNewPassword']) . '</div>';
-              unset($_SESSION['errorPassChange']);
-            } elseif (isset($_SESSION['successPassChange'])) {
-              echo '<div id="passwordMessage" class="message-box message-success">' . htmlspecialchars($_SESSION['successPassChange']) . '</div>';
+            if (isset($_SESSION['errorPassChange']) && is_array($_SESSION['errorPassChange'])) {
+              foreach ($_SESSION['errorPassChange'] as $error) {
+                echo '<div class="message-box message-error">' . htmlspecialchars($error) . '</div>';
+              }
               unset($_SESSION['successPassChange']);
-            } else {
-              echo '<div id="passwordMessage" class="message-box"></div>';
+            } elseif (isset($_SESSION['successPassChange'])) {
+              echo '<div class="message-box message-success">' . htmlspecialchars($_SESSION['successPassChange']) . '</div>';
+              unset($_SESSION['successPassChange']);
             }
             ?>
             <!-- <div id="passwordMessage" class="message-box"></div> -->

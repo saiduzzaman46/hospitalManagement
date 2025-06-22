@@ -13,6 +13,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dob = $_POST['dob'];
     $gender = $_POST['gender'];
     $address = $_POST['address'];
+    
+    if (strpos($phone, '+88') === 0) {
+        $phone = substr($phone, 3);
+    }
+
+
+    $lastPid = get_last_pid($conn); // Assume this returns something like 'P001'
+    if ($lastPid) {
+        $num = intval(substr($lastPid, 1)) + 1;
+        $pid = 'P' . str_pad($num, 3, '0', STR_PAD_LEFT);
+    } else {
+        $pid = 'P001';
+    }
+
     try {
         $error = [];
 
@@ -28,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: ../view/patients/register.php");
             exit;
         }
-        if (insert_patient($conn, $fname, $email, $password, $phone, $dob, $gender, $address)) {
+        if (insert_patient($conn,$pid, $fname, $email, $password, $phone, $dob, $gender, $address)) {
             header("Location: ../view/login/login.php");
             exit;
         } else {

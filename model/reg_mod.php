@@ -21,16 +21,16 @@ require_once '../config/connection.php';
 //     }
 // }
 
-function insert_patient($conn, $fname, $email, $password, $phone, $dob, $gender, $address)
+function insert_patient($conn,$pid, $fname, $email, $password, $phone, $dob, $gender, $address)
 {
 
-    $query = "INSERT INTO `patientsregister` (`fname`, `email`, `dob`, `gender`, `address`) 
-              VALUES ('$fname', '$email', '$dob', '$gender', '$address')";
+    $query = "INSERT INTO `patientsregister` (`pid`,`fname`, `email`, `dob`, `gender`, `address`) 
+              VALUES ('$pid','$fname', '$email', '$dob', '$gender', '$address')";
     if ($conn->query($query)) {
-        $user_ref_id = $conn->insert_id;
+        
         $role = 'patient';
         $login_query = "INSERT INTO `login` (`phone`, `password`, `user_ref_id`, `role`) 
-                        VALUES ('$phone', '$password', '$user_ref_id', '$role')";
+                        VALUES ('$phone', '$password', '$pid', '$role')";
 
         if ($conn->query($login_query)) {
             return true;

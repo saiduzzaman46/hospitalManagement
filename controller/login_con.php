@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
         if ($role === 'patient') {
-            setcookie('user_id', $user_info['id'], time() + 86400, "/");
+            setcookie('user_id', $user_info['pid'], time() + 86400, "/");
             header("Location: ../view/patients/patientsDash.php");
             exit();
         } else if ($role === 'doctor') {

@@ -19,9 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error['currentPassword'] = "Current password is required.";
     } elseif (!$getCurrentPassword) {
         $error['currentPassword'] = "Current password is incorrect.";
-    }
-
-    if (empty($newPassword)) {
+    } elseif (empty($newPassword)) {
         $error['newPassword'] = "New password is required.";
     } elseif (strlen($newPassword) < 8) {
         $error['newPassword'] = "New password must be at least 8 characters.";

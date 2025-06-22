@@ -1,9 +1,9 @@
 <?php
 
-function update_patient($conn, $id, $fname, $email, $dob, $gender, $address)
+function update_patient($conn, $pid, $fname, $email, $dob, $gender, $address)
 {
     // Update patient details
-    $query = "UPDATE `patientsregister` SET `fname` = '$fname', `email` = '$email', `dob` = '$dob', `gender` = '$gender', `address` = '$address' WHERE `id` = '$id'";
+    $query = "UPDATE `patientsregister` SET `fname` = '$fname', `email` = '$email', `dob` = '$dob', `gender` = '$gender', `address` = '$address' WHERE `pid` = '$pid'";
 
     if ($conn->query($query)) {
         return true;
@@ -11,10 +11,10 @@ function update_patient($conn, $id, $fname, $email, $dob, $gender, $address)
         return false;
     }
 }
-function update_phone($conn, $id, $phone)
+function update_phone($conn, $pid, $phone)
 {
     // Update phone number
-    $query = "UPDATE `login` SET `phone` = '$phone' WHERE `user_ref_id` = '$id'";
+    $query = "UPDATE `login` SET `phone` = '$phone' WHERE `user_ref_id` = '$pid'";
 
     if ($conn->query($query)) {
         return true;
@@ -23,10 +23,10 @@ function update_phone($conn, $id, $phone)
     }
 }
 
-function update_password($conn, $id, $password)
+function update_password($conn, $pid, $password)
 {
     // Update password
-    $query = "UPDATE `login` SET `password` = '$password' WHERE `user_ref_id` = '$id'";
+    $query = "UPDATE `login` SET `password` = '$password' WHERE `user_ref_id` = '$pid'";
 
     if ($conn->query($query)) {
         return true;
