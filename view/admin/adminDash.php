@@ -77,21 +77,24 @@ $specialties = [
 
 
 // Fetch patients data
-$query = "SELECT p.pid, p.fname, p.email, p.address, p.gender, p.dob, l.phone
+$query_patients = "SELECT p.pid, p.fname, p.email, p.address, p.gender, p.dob, l.phone
           FROM patientsregister AS p
           JOIN login AS l ON p.pid = l.user_ref_id
           WHERE l.role = 'patient'";
 
-$result = mysqli_query($conn, $query);
+$result_patients = mysqli_query($conn, $query_patients);
 $patients = [];
 
-if ($result && mysqli_num_rows($result) > 0) {
-    while ($row = mysqli_fetch_assoc($result)) {
+if ($result_patients && mysqli_num_rows($result_patients) > 0) {
+    while ($row = mysqli_fetch_assoc($result_patients)) {
         $patients[] = $row;
     }
+} else {
+    // Handle case where no patients are found
+    $patients = [];
 }
 /* For debugging: echo patients array */
-# echo '<pre>'; print_r($patients); echo '</pre>';
+// echo '<pre>'; print_r($patients); echo '</pre>';
 
 // --- Logic for Patient Edit Section ---
 $patientEditAction = isset($_GET['action']) && $_GET['action'] === 'edit_patient';
@@ -105,6 +108,23 @@ if ($section === 'patients' && $patientEditAction && isset($_GET['id'])) {
         }
     }
 }
+
+$query_doctors = "SELECT d.did, d.fname, d.specialty, d.email,d.fees,d.info, d.availablity,l.phone 
+                    FROM doctorregister AS d JOIN login AS l ON d.did = l.user_ref_id WHERE l.role = 'doctor';";
+$result_doctors = mysqli_query($conn, $query_doctors);
+$doctors = [];
+if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
+    while ($row = mysqli_fetch_assoc($result_doctors)) {
+        $doctors[] = $row;
+    }
+} else {
+    // Handle case where no doctors are found
+    $doctors = [];
+}
+
+// echo '<pre>';
+// print_r($doctors);
+// echo '</pre>';
 
 // --- Logic for Doctor Edit Section ---
 $doctorEditAction = (isset($_GET['action']) && $_GET['action'] == 'edit_doctor' && isset($_GET['id']));
@@ -351,11 +371,11 @@ if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id']))
                         <input type="hidden" name="action" value="add">
                         <div class="form-group">
                             <label for="doctorName">Full Name</label>
-                            <input type="text" id="doctorName" name="doctorName" placeholder="Doctor's Full Name" >
+                            <input type="text" id="doctorName" name="doctorName" placeholder="Doctor's Full Name">
                         </div>
                         <div class="form-group">
                             <label for="doctorSpecialty">Specialty</label>
-                            <select id="doctorSpecialty" name="doctorSpecialty" >
+                            <select id="doctorSpecialty" name="doctorSpecialty">
                                 <option value="">Select Specialty</option>
                                 <?php foreach ($specialties as $specialty): ?>
                                     <option value="<?php echo htmlspecialchars($specialty); ?>"><?php echo htmlspecialchars($specialty); ?></option>
@@ -364,29 +384,29 @@ if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id']))
                         </div>
                         <div class="form-group">
                             <label for="doctorContact">Email</label>
-                            <input type="email" id="doctorContact" name="doctorContact" placeholder="email@example.com" >
+                            <input type="email" id="doctorContact" name="doctorContact" placeholder="email@example.com">
                         </div>
                         <div class="form-group">
                             <label for="doctorPhone">Phone Number</label>
-                            <input type="tel" id="doctorPhone" name="doctorPhone" placeholder="+1234567890" title="Enter a valid phone number" >
+                            <input type="tel" id="doctorPhone" name="doctorPhone" placeholder="+1234567890" title="Enter a valid phone number">
                         </div>
                         <div class="form-group">
                             <label for="doctorPassword">Password</label>
-                            <input type="password" id="doctorPassword" name="doctorPassword" placeholder="Set password"  minlength="8">
-                           
+                            <input type="password" id="doctorPassword" name="doctorPassword" placeholder="Set password" minlength="8">
+
                         </div>
                         <div class="form-group">
                             <label for="doctorFees">Consultation Fees ($)</label>
-                            <input type="number" id="doctorFees" name="doctorFees" placeholder="e.g., 150"  min="0" step="any">
+                            <input type="number" id="doctorFees" name="doctorFees" placeholder="e.g., 150" min="0" step="any">
                         </div>
                         <div class="form-group">
                             <label for="doctorInfo">Doctor Info (Short Bio)</label>
-                            <textarea id="doctorInfo" name="doctorInfo" rows="3" placeholder="e.g., Dedicated to children's health with 10 years experience..." ></textarea>
+                            <textarea id="doctorInfo" name="doctorInfo" rows="3" placeholder="e.g., Dedicated to children's health with 10 years experience..."></textarea>
                         </div>
                         <div class="doctor-availability-group grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label for="doctorFromDay">Available From Day</label>
-                                <select id="doctorFromDay" name="doctorFromDay" >
+                                <select id="doctorFromDay" name="doctorFromDay">
                                     <option value="">Select Day</option>
                                     <option value="Monday">Monday</option>
                                     <option value="Tuesday">Tuesday</option>
@@ -399,7 +419,7 @@ if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id']))
                             </div>
                             <div class="form-group">
                                 <label for="doctorToDay">Available To Day</label>
-                                <select id="doctorToDay" name="doctorToDay" >
+                                <select id="doctorToDay" name="doctorToDay">
                                     <option value="">Select Day</option>
                                     <option value="Monday">Monday</option>
                                     <option value="Tuesday">Tuesday</option>
@@ -412,11 +432,11 @@ if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id']))
                             </div>
                             <div class="form-group">
                                 <label for="doctorStartTime">Start Time</label>
-                                <input type="time" id="doctorStartTime" name="doctorStartTime" >
+                                <input type="time" id="doctorStartTime" name="doctorStartTime">
                             </div>
                             <div class="form-group">
                                 <label for="doctorEndTime">End Time</label>
-                                <input type="time" id="doctorEndTime" name="doctorEndTime" >
+                                <input type="time" id="doctorEndTime" name="doctorEndTime">
                             </div>
                         </div>
                         <div class="form-actions">
@@ -547,20 +567,19 @@ if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id']))
                                     echo '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No doctor records found.</td></tr>';
                                 } else {
                                     foreach ($doctors as $doctor) {
-                                        $availabilityText = $doctor['fromDay'] . ' to ' . $doctor['toDay'] . ': ' . $doctor['startTime'] . ' - ' . $doctor['endTime'];
                                         echo '<tr>';
-                                        echo '<td>' . htmlspecialchars($doctor['id']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($doctor['name']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($doctor['did']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($doctor['fname']) . '</td>';
                                         echo '<td>' . htmlspecialchars($doctor['specialty']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($doctor['contact']) . '</td>';
+                                        echo '<td>' . htmlspecialchars($doctor['email']) . '</td>';
                                         echo '<td>' . htmlspecialchars($doctor['phone']) . '</td>';
-                                        echo '<td>$' . htmlspecialchars(number_format($doctor['fees'], 2)) . '</td>';
+                                        echo '<td>$' . htmlspecialchars($doctor['fees']) . '</td>';
                                         echo '<td>' . htmlspecialchars($doctor['info']) . '</td>'; // Separated Info
-                                        echo '<td>' . htmlspecialchars($availabilityText) . '</td>'; // Separated Availability
+                                        echo '<td>' . htmlspecialchars($doctor['availablity']) . '</td>'; // Separated Availability
                                         echo '<td><div class="action-buttons">';
-                                        echo '<a href="?section=doctors&action=edit_doctor&id=' . htmlspecialchars($doctor['id']) . '" class="button button-outline">Edit</a>';
+                                        echo '<a href="?section=doctors&action=edit_doctor&id=' . htmlspecialchars($doctor['did']) . '" class="button button-outline">Edit</a>';
                                         // Note: confirmAction JavaScript function would need to be defined elsewhere
-                                        echo '<button class="button button-danger" onclick="confirmAction(\'delete_doctor\', \'' . htmlspecialchars($doctor['id']) . '\')">Delete</button>';
+                                        echo '<button class="button button-danger" onclick="confirmAction(\'delete_doctor\', \'' . htmlspecialchars($doctor['did']) . '\')">Delete</button>';
                                         echo '</div></td>';
                                         echo '</tr>';
                                     }
