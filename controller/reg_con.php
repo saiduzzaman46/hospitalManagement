@@ -3,6 +3,7 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require_once '../config/connection.php';
     require_once '../model/reg_mod.php';
+    require_once '../model/get_user_info.php';
 
     $fname = $_POST['fullName'];
     $email = $_POST['email'];
@@ -15,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $error = [];
 
-        if (get_email_exist($conn, $email)) {
+        if (get_email($conn, $email)) {
             $error['email'] = "Email already exists.";
         }
-        if (get_phone_exist($conn, $phone)) {
+        if (get_phone($conn, $phone)) {
             $error['phone'] = "Phone number already exists.";
         }
 
