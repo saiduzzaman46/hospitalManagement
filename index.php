@@ -30,8 +30,8 @@
         </nav>
         <div class="nav-buttons">
         
-          <a href="view/login/login.html" class="button">Login</a>
-          <a href="view/patients/register.html" class="button button-outline ">Register</a>
+          <a href="view/login/login.php" class="button">Login</a>
+          <a href="view/patients/register.php" class="button button-outline ">Register</a>
         </div>
       </div>
     </header>
@@ -254,10 +254,10 @@
             with your needs in mind.
           </p>
           <div class="cta-buttons">
-            <a href="view/login/login.html" class="button button-secondary"
+            <a href="view/login/login.php" class="button button-secondary"
               >Login to Your Account</a
             >
-            <a href="view/patients/register.html" class="button button-outline">Register for Access</a>
+            <a href="view/patients/register.php" class="button button-outline">Register for Access</a>
           </div>
         </div>
       </section>

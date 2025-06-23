@@ -49,27 +49,47 @@
 //   },
 // ];
 
-
-// Ensure the DOM is fully loaded before running the script
 document.addEventListener("DOMContentLoaded", () => {
   // --- Sidebar Toggle Logic ---
   const menuToggle = document.getElementById("menuToggle");
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
 
-  // Function to close the sidebar and overlay
   function closeSidebar() {
     sidebar.classList.remove("active");
     overlay.classList.remove("active");
   }
 
-  // Event listener for the menu toggle button
   menuToggle.addEventListener("click", () => {
     sidebar.classList.toggle("active");
     overlay.classList.toggle("active");
   });
 
   overlay.addEventListener("click", closeSidebar);
-
   closeSidebar();
 });
+  // --- Doctor Filter/Search AJAX Logic ---
+const nameInput = document.getElementById("doctorNameSearch");
+const specialtySelect = document.getElementById("doctorCategorySelect");
+const doctorGrid = document.getElementById("doctorGrid");
+
+function fetchDoctors() {
+  const name = nameInput.value.trim();
+  const specialty = specialtySelect.value;
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "../../controller/load_doctors.php?name=" + encodeURIComponent(name) + "&specialty=" + encodeURIComponent(specialty), true);
+  xhr.onreadystatechange = function () {
+    if (xhr.status === 200) {
+      doctorGrid.innerHTML = xhr.responseText;
+    }
+  };
+  xhr.send();
+}
+
+// Attach listeners
+nameInput.addEventListener("input", fetchDoctors);
+specialtySelect.addEventListener("change", fetchDoctors);
+
+// Initial load
+fetchDoctors();

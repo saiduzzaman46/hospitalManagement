@@ -24,20 +24,45 @@ if (isset($_COOKIE['user_id'])) {
     $id = $fname = $phone = $email = $dob = $gender = $address = '';
   }
 }
-
-$query_doctors = "SELECT d.did, d.fname, d.specialty, d.email,d.fees,d.info, d.availablity,l.phone 
-                    FROM doctorregister AS d JOIN login AS l ON d.did = l.user_ref_id WHERE l.role = 'doctor';";
-$result_doctors = mysqli_query($conn, $query_doctors);
-$doctors = [];
-if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
-    while ($row = mysqli_fetch_assoc($result_doctors)) {
-        $doctors[] = $row;
-    }
+$specialties = [
+  'Cardiology',
+  'Pediatrics',
+  'Neurology',
+  'Dermatology',
+  'Orthopedics',
+  'Ophthalmology',
+  'General Medicine',
+  'Oncology',
+  'Gastroenterology',
+  'Psychiatry',
+  'Urology',
+  'ENT',
+  'Dentistry'
+];
+$totalQuery = "SELECT COUNT(*) as total FROM `doctorregister`";
+$totalResult = mysqli_query($conn, $totalQuery);
+if ($totalResult && mysqli_num_rows($totalResult) > 0) {
+  $totalRow = mysqli_fetch_assoc($totalResult);
+  $totalDoctors = $totalRow['total'];
 } else {
-    $doctors = [];
+  $totalDoctors = 0;
 }
 
+$appointmentAction = isset($_GET['section']) && $_GET['section'] === 'appointment_form' && isset($_GET['id']);
+$appointmentDoctor = null;
+if ($appointmentAction) {
+  $doctorId = $_GET['id'];
+  $query = "SELECT * FROM doctorregister WHERE did = '$doctorId'";
+  $result = mysqli_query($conn, $query);
+  if ($result && mysqli_num_rows($result) > 0) {
+    $appointmentDoctor = mysqli_fetch_assoc($result);
+  }
+}
+
+
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -73,7 +98,7 @@ if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
       <ul class="sidebar-menu">
         <li><a href="?section=home" class="menu-item <?php echo $section === 'home' ? 'active' : ''; ?>"><i class="fas fa-home"></i> Home</a></li>
         <li><a href="?section=appointments" class="menu-item <?php echo $section === 'appointments' ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> My Appointments</a></li>
-        <li><a href="?section=doctors" class="menu-item <?php echo $section === 'doctors' ? 'active' : ''; ?>"><i class="fas fa-user-md"></i> View & Book Doctors</a></li>
+        <li><a href="?section=doctors" class="menu-item <?php echo $section === 'doctors' ? 'active' : ''; ?>"><i class="fas fa-user-md"></i> View & Appointments</a></li>
         <li><a href="?section=records" class="menu-item <?php echo $section === 'records' ? 'active' : ''; ?>"><i class="fas fa-file-medical-alt"></i> Medical Records</a></li>
         <li><a href="?section=notifications" class="menu-item <?php echo $section === 'notifications' ? 'active' : ''; ?>"><i class="fas fa-bell"></i> Notifications</a></li>
         <li><a href="?section=profile" class="menu-item <?php echo $section === 'profile' ? 'active' : ''; ?>"><i class="fas fa-user-cog"></i> Profile Settings</a></li>
@@ -104,7 +129,7 @@ if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
           </div>
           <div class="card">
             <h4>Total Doctors</h4>
-            <p><?php echo count($doctors); ?></p>
+            <p><?php echo htmlspecialchars($totalDoctors); ?></p>
             <a class="button" href="?section=doctors">View Details</a>
           </div>
         </div>
@@ -135,39 +160,69 @@ if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
         </div>
       </section>
 
+
       <!-- Doctors -->
       <section id="content-doctors" class="dashboard-section" style="<?php echo $section === 'doctors' ? '' : 'display: none'; ?>">
         <h2>Our Expert Doctors</h2>
         <p>Find the right specialist for your needs. Click 'Book Now' to schedule an appointment.</p>
-        <div class="doctor-grid" id="doctorGrid">
-          <?php if (!empty($doctors)): ?>
-            <?php foreach ($doctors as $doctor): ?>
-              <div class="doctor-card">
-                <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
-                <h3><?php echo htmlspecialchars($doctor['fname']); ?></h3>
-                <p class="doctor-specialty"><?php echo htmlspecialchars($doctor['specialty']); ?></p>
-                <p><?php echo htmlspecialchars($doctor['info']); ?></p>
-                <div class="available-times">
-                  <strong>Available:</strong> <?php echo htmlspecialchars($doctor['availablity']); ?>
-                </div>
-                <!-- <div class="doctor-contact">
-                  <span><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($doctor['email']); ?></span><br>
-                  <span><i class="fas fa-phone"></i> <?php echo htmlspecialchars($doctor['phone']); ?></span>
-                </div>
-                <div class="doctor-fees">
-                  <strong>Fees:</strong> ₹<?php echo htmlspecialchars($doctor['fees']); ?>
-                </div> -->
-                <div class="card-buttons">
-                  <a href="#" class="button button-secondary">Book Now</a>
-                  <a href="#" class="button button-outline">View Details</a>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <p>No doctors found.</p>
-          <?php endif; ?>
-         
+
+        <div class="doctor-search-controls">
+          <div class="form-group">
+            <label for="doctorNameSearch">Search by Name:</label>
+            <input type="text" id="doctorNameSearch" placeholder="e.g., Dr. Emily Watson" />
+          </div>
+          <div class="form-group">
+            <label for="doctorCategorySelect">Filter by Specialty:</label>
+            <select id="doctorCategorySelect">
+              <option value="">All Specialties</option>
+              <?php foreach ($specialties as $specialty): ?>
+                <option value="<?php echo htmlspecialchars($specialty); ?>"><?php echo htmlspecialchars($specialty); ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
         </div>
+        <div class="doctor-grid" id="doctorGrid">
+          <!-- add doctor data here -->
+        </div>
+      </section>
+
+      <section id="content-appointment-form" class="dashboard-section" style="<?php echo $section === 'appointment_form' ? '' : 'display: none'; ?>">
+        <h2>Book Appointment</h2>
+        <?php if ($appointmentDoctor): ?>
+          <form method="POST" action="../../controller/submit_appointment.php">
+            <input type="hidden" name="doctor_id" value="<?php echo htmlspecialchars($appointmentDoctor['did']); ?>">
+            <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($id); ?>">
+
+            <div class="form-group">
+              <label>Doctor:</label>
+              <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['fname']); ?>" disabled>
+            </div>
+            <div class="form-group">
+              <label>Specialty:</label>
+              <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['specialty']); ?>" disabled>
+            </div>
+            <div class="form-group">
+              <label>Patient:</label>
+              <input type="text" value="<?php echo htmlspecialchars($fname); ?>" disabled>
+            </div>
+            <div class="form-group">
+              <label>Your Phone:</label>
+              <input type="text" value="<?php echo htmlspecialchars($phone); ?>" disabled>
+            </div>
+            <div class="form-group">
+              <label>Appointment Date:</label>
+              <input type="date" name="appointment_date" required>
+            </div>
+            <div class="form-group">
+              <label>Preferred Time:</label>
+              <input type="time" name="appointment_time" required>
+            </div>
+
+            <input type="submit" class="button button-secondary" value="Proceed to Payment">
+          </form>
+        <?php else: ?>
+          <p>Doctor not found.</p>
+        <?php endif; ?>
       </section>
 
       <!-- Records -->
@@ -303,10 +358,7 @@ if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
       <!-- Logout -->
       <section id="content-logout" class="dashboard-section" style="<?php echo $section === 'logout' ? '' : 'display: none'; ?>">
         <h2>Logging Out...</h2>
-        <?php
-        session_destroy();
-        header("refresh:2;url=../../login.php");
-        ?>
+
         <p>Redirecting to login...</p>
       </section>
     </main>

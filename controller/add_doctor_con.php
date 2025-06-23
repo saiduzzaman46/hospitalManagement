@@ -1,19 +1,19 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once '../config/connection.php';
+require_once '../model/get_user_info.php';
+require_once '../model/add_doctor_mod.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
-    require_once '../config/connection.php';
-    require_once '../model/get_user_info.php';
-    require_once '../model/add_doctor_mod.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    if (isset($_POST['action']) && $_POST['action'] === 'add') {
+        $password = $_POST['doctorPassword'];
+    }
 
     $name     = $_POST['doctorName'];
     $specialty = $_POST['doctorSpecialty'];
     $email    = $_POST['doctorContact'];
     $phone    = $_POST['doctorPhone'];
-    $password = $_POST['doctorPassword'];
     $fees     = $_POST['doctorFees'];
     $info     = $_POST['doctorInfo'];
     $fromDay  = $_POST['doctorFromDay'];
@@ -23,57 +23,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $availability = "$fromDay to $toDay, $start - $end";
 
-    // Validate input data
-    if (!isset($conn)) {
-        echo "Database connection failed.";
-        exit;
-    }
-
+    $errors = [];
     try {
 
-        $errors = [];
-
-        if (empty($name) || empty($specialty) || empty($email) || empty($phone) || empty($password) || empty($fees) || empty($info) || empty($fromDay) || empty($toDay) || empty($start) || empty($end)) {
+        // Common validation
+        if (empty($name) || empty($specialty) || empty($email) || empty($phone) || empty($fees) || empty($info) || empty($fromDay) || empty($toDay) || empty($start) || empty($end)) {
             $errors[] = "All fields are required.";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Invalid email format.";
-        } elseif (strlen($password) < 8) {
-            $errors[] = "Password must be at least 8 characters long.";
         } elseif (!is_numeric($fees) || $fees <= 0) {
             $errors[] = "Fees must be a positive number.";
-        } elseif (get_doctor_email($conn, $email)) {
-            $errors[] = "Email already exists.";
-        } elseif (get_doctor_phone($conn, $phone)) {
-            $errors[] = "Phone number already exists.";
-        }
-        // Check if doctor ID already exists
-        $lastDid = get_last_did($conn);
-        if ($lastDid) {
-            $lastDid = intval(substr($lastDid, 1)) + 1;
-            $lastDid = 'D' . str_pad($lastDid, 3, '0', STR_PAD_LEFT);
-        } else {
-            $lastDid = 'D001';
         }
 
-        if ($errors) {
-            $_SESSION['errorAddDoctor'] = $errors;
-            header("Location: ../view/admin/adminDash.php?section=doctors&action=add");
+        // Insert Operation
+        if (isset($_POST['adddoctor'])) {
+            if (empty($password) || strlen($password) < 8) {
+                $errors[] = "Password must be at least 8 characters long.";
+            }
+            if (get_doctor_email($conn, $email)) {
+                $errors[] = "Email already exists.";
+            }
+            if (get_doctor_phone($conn, $phone)) {
+                $errors[] = "Phone number already exists.";
+            }
+
+            if ($errors) {
+                $_SESSION['errorAddDoctor'] = $errors;
+                header("Location: ../view/admin/adminDash.php?section=doctors&action=add");
+                exit;
+            }
+
+            // Generate doctor ID
+            $lastDid = get_last_did($conn);
+            $lastDid = $lastDid ? 'D' . str_pad((intval(substr($lastDid, 1)) + 1), 3, '0', STR_PAD_LEFT) : 'D001';
+
+            if (insert_doctor($conn, $lastDid, $name, $specialty, $email, $phone, $password, $fees, $info, $availability)) {
+                $_SESSION['successAddDoctor'] = "Doctor added successfully.";
+            } else {
+                throw new Exception("Failed to add doctor.");
+            }
+            header("Location: ../view/admin/adminDash.php?section=doctors&action=view");
             exit;
         }
 
+        // Update Operation
+        if (isset($_POST['savechange']) && isset($_POST['doctor_id'])) {
+            $doctorId = $_POST['doctor_id'];
 
-        if (insert_doctor($conn, $lastDid, $name, $specialty, $email, $phone, $password, $fees, $info, $availability)) {
-            $_SESSION['successAddDoctor'] = "Doctor added successfully.";
+            if ($errors) {
+                $_SESSION['errorEditDoctor'] = $errors;
+                header("Location: ../view/admin/adminDash.php?section=doctors&action=edit_doctor&id=" . $doctorId);
+                exit;
+            }
+
+            if (update_doctor($conn, $doctorId, $name, $specialty, $email, $phone, $fees, $info, $availability)) {
+                $_SESSION['successEditDoctor'] = "Doctor updated successfully.";
+            } else {
+                throw new Exception("Failed to update doctor.");
+            }
             header("Location: ../view/admin/adminDash.php?section=doctors&action=view");
-        } else {
-            throw new Exception("Failed to add doctor. Please try again.");
+            exit;
         }
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
         exit;
     }
-    header("Location: ../view/admin/adminDash.php?section=doctors&action=view");
-    exit;
 }
- 
-        // Insert doctor information

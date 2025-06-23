@@ -1,4 +1,5 @@
 <?php
+
 function get_email($conn, $email)
 {
     $query = "SELECT * FROM `patientsregister` WHERE `email` = '$email';";

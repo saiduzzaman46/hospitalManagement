@@ -49,9 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
   //                                                                     ?>';
 });
 
-function confirmAction(id) {
+function deleteParient(id) {
   if (confirm("Are you sure you want to delete this patient?")) {
     document.getElementById("deletePatientId").value = id;
-    document.getElementById("deleteForm").submit();
+    document.getElementById("deletePatientsForm").submit();
+  }
+}
+function deleteDoctor(id) {
+  if (confirm("Are you sure you want to delete this doctor?")) {
+    document.getElementById("deleteDoctorId").value = id;
+    document.getElementById("deleteDoctorForm").submit();
   }
 }

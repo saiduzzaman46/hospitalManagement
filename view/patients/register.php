@@ -120,7 +120,7 @@
     <!-- <div id="message" class="message-box"></div> -->
 
     <div class="back-to-login">
-      Already have an account? <a href="../../view/login/login.html">Login here</a>
+      Already have an account? <a href="../../view/login/login.php">Login here</a>
     </div>
   </div>
 
