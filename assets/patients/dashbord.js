@@ -49,47 +49,6 @@
 //   },
 // ];
 
-// function renderDoctors(doctorsToRender) {
-//   const doctorGrid = document.getElementById("doctorGrid");
-//   doctorGrid.innerHTML = "";
-
-//   if (doctorsToRender.length === 0) {
-//     doctorGrid.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 1.8rem; margin-top: 3rem;">No doctors found matching your criteria.</p>';
-//     return;
-//   }
-
-//   doctorsToRender.forEach((doctor) => {
-//     const doctorCard = document.createElement("div");
-//     doctorCard.className = "doctor-card";
-//     doctorCard.innerHTML = `
-//                     <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
-//                     <h3>${doctor.name}</h3>
-//                     <p class="doctor-specialty">${doctor.specialty}</p>
-//                     <p>${doctor.description}</p>
-//                     <div class="available-times">
-//                         <strong>Available:</strong> ${doctor.availableTimes.join(", ")}
-//                     </div>
-//                     <div class="card-buttons">
-//                         <a href="#" class="button button-secondary">Book Now</a>
-//                         <a href="#" class="button button-outline">View Details</a>
-//                     </div>
-//                 `;
-//     doctorGrid.appendChild(doctorCard);
-//   });
-// }
-
-// function filterDoctors() {
-//   const nameSearch = document.getElementById("doctorNameSearch").value.toLowerCase();
-//   const categoryFilter = document.getElementById("doctorCategorySelect").value;
-
-//   const filtered = doctorsData.filter((doctor) => {
-//     const matchesName = doctor.name.toLowerCase().includes(nameSearch);
-//     const matchesCategory = categoryFilter === "" || doctor.specialty === categoryFilter;
-//     return matchesName && matchesCategory;
-//   });
-
-//   renderDoctors(filtered);
-// }
 
 // Ensure the DOM is fully loaded before running the script
 document.addEventListener("DOMContentLoaded", () => {

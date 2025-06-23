@@ -24,6 +24,19 @@ if (isset($_COOKIE['user_id'])) {
     $id = $fname = $phone = $email = $dob = $gender = $address = '';
   }
 }
+
+$query_doctors = "SELECT d.did, d.fname, d.specialty, d.email,d.fees,d.info, d.availablity,l.phone 
+                    FROM doctorregister AS d JOIN login AS l ON d.did = l.user_ref_id WHERE l.role = 'doctor';";
+$result_doctors = mysqli_query($conn, $query_doctors);
+$doctors = [];
+if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
+    while ($row = mysqli_fetch_assoc($result_doctors)) {
+        $doctors[] = $row;
+    }
+} else {
+    $doctors = [];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +104,7 @@ if (isset($_COOKIE['user_id'])) {
           </div>
           <div class="card">
             <h4>Total Doctors</h4>
-            <p>8</p>
+            <p><?php echo count($doctors); ?></p>
             <a class="button" href="?section=doctors">View Details</a>
           </div>
         </div>
@@ -127,7 +140,33 @@ if (isset($_COOKIE['user_id'])) {
         <h2>Our Expert Doctors</h2>
         <p>Find the right specialist for your needs. Click 'Book Now' to schedule an appointment.</p>
         <div class="doctor-grid" id="doctorGrid">
-          <p>Doctor list will be loaded dynamically...</p>
+          <?php if (!empty($doctors)): ?>
+            <?php foreach ($doctors as $doctor): ?>
+              <div class="doctor-card">
+                <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+                <h3><?php echo htmlspecialchars($doctor['fname']); ?></h3>
+                <p class="doctor-specialty"><?php echo htmlspecialchars($doctor['specialty']); ?></p>
+                <p><?php echo htmlspecialchars($doctor['info']); ?></p>
+                <div class="available-times">
+                  <strong>Available:</strong> <?php echo htmlspecialchars($doctor['availablity']); ?>
+                </div>
+                <!-- <div class="doctor-contact">
+                  <span><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($doctor['email']); ?></span><br>
+                  <span><i class="fas fa-phone"></i> <?php echo htmlspecialchars($doctor['phone']); ?></span>
+                </div>
+                <div class="doctor-fees">
+                  <strong>Fees:</strong> ₹<?php echo htmlspecialchars($doctor['fees']); ?>
+                </div> -->
+                <div class="card-buttons">
+                  <a href="#" class="button button-secondary">Book Now</a>
+                  <a href="#" class="button button-outline">View Details</a>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <p>No doctors found.</p>
+          <?php endif; ?>
+         
         </div>
       </section>
 

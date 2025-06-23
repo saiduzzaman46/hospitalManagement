@@ -22,34 +22,7 @@ $editMode = isset($_GET['edit']) && $_GET['edit'] == '1'; // For admin profile e
 
 
 // Dummy doctor data for demonstration. In a real app, this would be fetched from DB.
-$doctors = [
-    [
-        'id' => 1,
-        'name' => 'Dr. Jane Doe',
-        'specialty' => 'Cardiology',
-        'contact' => 'jane.doe@example.com',
-        'phone' => '123-456-7890',
-        'fees' => 150,
-        'info' => 'Experienced heart specialist.',
-        'fromDay' => 'Monday',
-        'toDay' => 'Friday',
-        'startTime' => '09:00',
-        'endTime' => '17:00'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Dr. John Smith',
-        'specialty' => 'Pediatrics',
-        'contact' => '+19876543210',
-        'phone' => '987-654-3210',
-        'fees' => 120,
-        'info' => 'Dedicated to children\'s health.',
-        'fromDay' => 'Tuesday',
-        'toDay' => 'Saturday',
-        'startTime' => '10:00',
-        'endTime' => '18:00'
-    ]
-];
+
 
 // Dummy data for doctor to edit (simulating fetching from DB based on ID)
 
@@ -213,7 +186,7 @@ if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id']))
                     </div>
                     <div class="card">
                         <h4>Total Doctors</h4>
-                        <p id="totalDoctorsCount">0</p>
+                        <p id="totalDoctorsCount"><?php echo count($doctors); ?></p>
                         <a class="button" href="?section=doctors">View Doctors</a>
                     </div>
                     <div class="card">
