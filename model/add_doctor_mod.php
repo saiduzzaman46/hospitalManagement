@@ -1,5 +1,4 @@
 <?php
-
 function insert_doctor($conn, $did, $fname, $specialty, $email, $phone, $password, $fees, $info, $availability)
 {
 
@@ -23,6 +22,7 @@ function insert_doctor($conn, $did, $fname, $specialty, $email, $phone, $passwor
 
 function update_doctor($conn, $did, $fname, $specialty, $email, $phone, $fees, $info, $availability)
 {
+    
     $query = "UPDATE `doctorregister` 
               SET `fname` = '$fname', `specialty` = '$specialty', `email` = '$email', 
                   `fees` = '$fees', `info` = '$info', `availablity` = '$availability' 

@@ -36,17 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // For today's appointments, you'd need a PHP function to get today's count from DB
-  // document.getElementById('todayAppointmentsCount').textContent = '<?php
-  //                                                                     $today_date = date('Y-m-d'); // Current date in YYYY-MM-DD format
-  //                                                                     $count = 0;
-  //                                                                     foreach ($appointments as $appt) {
-  //                                                                         if ($appt['date'] === $today_date) {
-  //                                                                             $count++;
-  //                                                                         }
-  //                                                                     }
-  //                                                                     echo $count;
-  //                                                                     ?>';
 });
 
 function deleteParient(id) {
@@ -60,4 +49,29 @@ function deleteDoctor(id) {
     document.getElementById("deleteDoctorId").value = id;
     document.getElementById("deleteDoctorForm").submit();
   }
+}
+function deleteAppointment(id) {
+  if (confirm("Are you sure you want to delete this appointment?")) {
+    document.getElementById("deleteAppointmentId").value = id;
+    document.getElementById("deleteAppointmentForm").submit();
+  }
+}
+
+function updateAppointmentStatus(appointmentId, newStatus) {
+   
+  fetch('../../controller/update_appointment_status.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `id=${appointmentId}&status=${newStatus}`
+  })
+  .then(response => response.text())
+  .then(data => {
+    // console.log(data); // Optional: log success or failure
+    location.reload(); // Refresh to reflect updated status
+  })
+  .catch(error => {
+    console.error('Error updating appointment status:', error);
+  });
 }

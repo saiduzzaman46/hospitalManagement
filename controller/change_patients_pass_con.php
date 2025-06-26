@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($currentPassword)) {
         $error['currentPassword'] = "Current password is required.";
-    } elseif (!$getCurrentPassword) {
+    } elseif ($getCurrentPassword !== $currentPassword) {
         $error['currentPassword'] = "Current password is incorrect.";
     } elseif (empty($newPassword)) {
         $error['newPassword'] = "New password is required.";
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error['confirmNewPassword'] = "Passwords do not match.";
     }
 
-    if (!empty($error)) {
+    if ($error) {
         $_SESSION['errorPassChange'] = $error;
         header("Location: ../view/patients/patientsDash.php?section=profile");
         exit;
@@ -37,8 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (update_password($conn, $id, $newPassword)) {
         $_SESSION['successPassChange'] = "Password changed successfully.";
+        header("Location: ../view/patients/patientsDash.php?section=profile");
+        exit;
     } else {
         $_SESSION['errorPassChange']['general'] = "Password update failed.";
+        header("Location: ../view/patients/patientsDash.php?section=profile");
+        exit;
     }
 
     header("Location: ../view/patients/patientsDash.php?section=profile");

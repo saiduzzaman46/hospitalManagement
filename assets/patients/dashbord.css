@@ -302,6 +302,18 @@ footer p {
   padding: 0.8rem 1.6rem;
   font-size: 1.5rem;
 }
+.quick-actions {
+  background-color: #f0f4f8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  margin-top: 2.4rem;
+  border-radius: 1rem;
+  padding: 2.4rem;
+  text-align: center;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+/* style="margin-top: 3.2rem; text-align: left; background-color: #f0f4f8; padding: 2.4rem; border-radius: 1rem" */
 
 .doctor-grid {
   display: grid;
@@ -414,6 +426,144 @@ footer p {
   color: #1e293b;
 }
 
+/* Appointment Section Specific Styles */
+.appointment-section {
+  background-color: #f0f4f8;
+  padding: 2rem;
+  border-radius: 0.8rem;
+  text-align: left;
+}
+
+.appointment-section h3 {
+  margin-bottom: 1.5rem;
+  font-size: 2.4rem;
+}
+.appointments-section {
+  background-color: #f0f4f8;
+  padding: 2rem;
+  border-radius: 0.8rem;
+  margin-top: 2rem;
+}
+
+.appointment-section .form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+.appointment-section .form-group label {
+  font-size: 1.8rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.appointment-section .form-group input,
+.appointment-section .form-group select {
+  font-size: 1.8rem;
+  color: #334155;
+  padding: 1rem 0.5rem;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+.appointment-section .form-group .appointmentInput {
+  border-radius: 0.8rem;
+  border: 1.5px solid #cccccc;
+}
+.available-time-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1.6rem;
+}
+
+.appointment-section .form-group input[type="date"],
+.appointment-section .form-group input[type="time"] {
+  width: 50%;
+  padding: 1rem;
+  border: 0.1rem solid #cbd5e0;
+  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  color: #334155;
+  outline: none;
+}
+.appointment-section .form-group input[type="date"]:focus,
+.appointment-section .form-group input[type="time"]:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.3rem rgba(99, 102, 241, 0.2);
+}
+.upcoming-appointments-list {
+  margin-top: 2.4rem;
+  font-size: 1.8rem;
+  color: #334155;
+  line-height: 1.5;
+  margin-left: 1.8rem;
+}
+
+.past-app-header {
+  margin-top: 1.8rem;
+}
+.table-container {
+  background-color: #ffffff;
+  border-radius: 0.4rem;
+  box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  margin-top: 1.2rem;
+  border: 0.1rem solid #d1d5db;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 1.4rem;
+}
+.data-table th,
+.data-table td {
+  padding: 1rem 1.4rem;
+  border-bottom: 0.1rem solid #e5e7eb;
+  white-space: nowrap;
+}
+.data-table th {
+  background-color: #eef2f6;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  font-size: 1.3rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+.data-table .action-buttons {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-start;
+}
+.data-table .action-buttons .button {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  box-shadow: none;
+}
+.data-table .action-buttons .button:hover {
+  transform: none;
+}
+.table-container::-webkit-scrollbar {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0.4rem;
+}
+.table-container::-webkit-scrollbar-thumb {
+  background: #a1a1aa;
+  border-radius: 0.4rem;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
 /* Profile Settings Specific Styles */
 .profile-section {
   background-color: #f0f4f8;
@@ -429,12 +579,16 @@ footer p {
   font-size: 2.4rem;
 }
 
-.profile-section .form-group {
+.profile-section .form-group,
+.appointment-section .form-group {
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+}
+.form-group input[type="text"] {
+  flex: 2;
 }
 
 .profile-form-row {
@@ -453,9 +607,10 @@ footer p {
   margin-bottom: 0.5rem;
   display: block;
 }
-.form-group input,
-.form-group textarea,
-.form-group select {
+
+.profile-section .form-group input,
+.profile-section .form-group textarea,
+.profile-section .form-group select {
   font-size: 1.8rem;
   color: #334155;
   padding: 1rem 0.5rem;
@@ -487,7 +642,6 @@ footer p {
   color: #334155;
   outline: none;
 }
-
 
 .password-change-section {
   background-color: #f0f4f8;
@@ -586,6 +740,10 @@ footer p {
   .dashboard-home .summary-cards {
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   }
+  .quick-actions {
+    flex-direction: row;
+    gap: 1.2rem;
+  }
 
   .doctor-search-controls {
     flex-direction: column;
@@ -598,6 +756,11 @@ footer p {
 
   .profile-form-row .form-group {
     min-width: 100%;
+  }
+
+  .available-time-container {
+    flex-direction: column;
+    gap: 0;
   }
 }
 
@@ -624,6 +787,9 @@ footer p {
 
   .doctor-grid {
     grid-template-columns: 1fr;
+  }
+  .table-container {
+    overflow-x: auto;
   }
 }
 

@@ -1,29 +1,25 @@
+<script>
+  // Check if the page was loaded from the browser cache
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+      window.location.reload();
+    }
+  });
+</script>
+
+
 <?php
+if (!isset($_COOKIE['user_id'])) {
+  header("Location: ../login/login.php");
+  exit();
+}
+
 session_start();
-require_once '../../model/get_user_info.php';
-require_once '../../config/connection.php';
 
 $section = isset($_GET['section']) ? $_GET['section'] : 'home';
 $editMode = isset($_GET['edit']) && $_GET['edit'] == '1';
 
-if (isset($_COOKIE['user_id'])) {
-  $user_id = $_COOKIE['user_id'];
-  // Fetch user info using the get_user_info function
-  $user_info = get_user_info($conn, $user_id);
-
-  if ($user_info) {
-    $id = $user_info['pid'];
-    $fname = $user_info['fname'];
-    $phone = get_user_phone($conn, $user_info['pid']);
-    $email = $user_info['email'];
-    $dob = $user_info['dob'];
-    $gender = $user_info['gender'];
-    $address = $user_info['address'];
-  } else {
-    // Handle user not found
-    $id = $fname = $phone = $email = $dob = $gender = $address = '';
-  }
-}
+// Check if user is logged in and has a valid user ID cookie and retrieve user information
 $specialties = [
   'Cardiology',
   'Pediatrics',
@@ -39,27 +35,26 @@ $specialties = [
   'ENT',
   'Dentistry'
 ];
-$totalQuery = "SELECT COUNT(*) as total FROM `doctorregister`";
-$totalResult = mysqli_query($conn, $totalQuery);
-if ($totalResult && mysqli_num_rows($totalResult) > 0) {
-  $totalRow = mysqli_fetch_assoc($totalResult);
-  $totalDoctors = $totalRow['total'];
-} else {
-  $totalDoctors = 0;
+
+require_once '../../model/patients_model.php';
+// require_once '../../config/connection.php';
+
+
+
+if (isset($_COOKIE['user_id'])) {
+  $user_id = $_COOKIE['user_id'];
+  $dashboardData = patientsDashboard($user_id);
+
+  $user_info = $dashboardData['user_info'];
+  $phone = $dashboardData['phone'];
+  $appointmentDoctor = $dashboardData['appointmentDoctor'];
+  $availablityDoctor = $dashboardData['availablityDoctor'];
+  $upcomingAppointments = $dashboardData['upcomingAppointments'];
+  $pastAppointments = $dashboardData['pastAppointments'];
+  $upcomingAppointmentsCount = $dashboardData['upcomingAppointmentsCount'];
+  $pastAppointmentsCount = $dashboardData['pastAppointmentsCount'];
+  $totalDoctors = $dashboardData['totalDoctors'];
 }
-
-$appointmentAction = isset($_GET['section']) && $_GET['section'] === 'appointment_form' && isset($_GET['id']);
-$appointmentDoctor = null;
-if ($appointmentAction) {
-  $doctorId = $_GET['id'];
-  $query = "SELECT * FROM doctorregister WHERE did = '$doctorId'";
-  $result = mysqli_query($conn, $query);
-  if ($result && mysqli_num_rows($result) > 0) {
-    $appointmentDoctor = mysqli_fetch_assoc($result);
-  }
-}
-
-
 
 ?>
 
@@ -87,7 +82,7 @@ if ($appointmentAction) {
       </div>
       <div class="patient-info">
         <i class="fas fa-user-circle"></i>
-        <span><?php echo htmlspecialchars($fname); ?></span>
+        <span><?php echo htmlspecialchars($user_info['fname']); ?></span>
       </div>
     </div>
   </header>
@@ -102,7 +97,9 @@ if ($appointmentAction) {
         <li><a href="?section=records" class="menu-item <?php echo $section === 'records' ? 'active' : ''; ?>"><i class="fas fa-file-medical-alt"></i> Medical Records</a></li>
         <li><a href="?section=notifications" class="menu-item <?php echo $section === 'notifications' ? 'active' : ''; ?>"><i class="fas fa-bell"></i> Notifications</a></li>
         <li><a href="?section=profile" class="menu-item <?php echo $section === 'profile' ? 'active' : ''; ?>"><i class="fas fa-user-cog"></i> Profile Settings</a></li>
-        <li><a href="?section=logout" class="menu-item <?php echo $section === 'logout' ? 'active' : ''; ?>"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li> <a href="../../controller/logoutPatients.php" class="menu-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+
+        <!-- <li><a href="?section=logout" class="menu-item <?php echo $section === 'logout' ? 'active' : ''; ?>"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
       </ul>
     </aside>
 
@@ -114,31 +111,32 @@ if ($appointmentAction) {
         <div class="summary-cards">
           <div class="card">
             <h4>Upcoming Appointments</h4>
-            <p>3</p>
+            <p><?php echo $upcomingAppointmentsCount; ?></p>
             <a class="button" href="?section=appointments">View Details</a>
           </div>
           <div class="card">
             <h4>Past Appointments</h4>
-            <p>12</p>
+            <p><?php echo $pastAppointmentsCount; ?></p>
             <a class="button" href="?section=appointments">View Details</a>
-          </div>
-          <div class="card">
-            <h4>New Notifications</h4>
-            <p>2</p>
-            <a class="button" href="?section=notifications">View Details</a>
           </div>
           <div class="card">
             <h4>Total Doctors</h4>
             <p><?php echo htmlspecialchars($totalDoctors); ?></p>
             <a class="button" href="?section=doctors">View Details</a>
           </div>
+          <div class="card">
+            <h4>New Notifications</h4>
+            <p>2</p>
+            <a class="button" href="?section=notifications">View Details</a>
+          </div>
+
         </div>
-        <div style="margin-top: 3.2rem; text-align: left; background-color: #f0f4f8; padding: 2.4rem; border-radius: 1rem">
-          <h3>Quick Actions</h3>
-          <p>
-            <a href="?section=doctors" class="button button-secondary">Book New Appointment</a>
-            <a href="?section=records" class="button">View My Records</a>
-          </p>
+        <div class="quick-actions">
+          <!-- <h3>Quick Actions</h3> -->
+
+          <a href="?section=doctors" class="button button-secondary">Book New Appointment</a>
+          <a href="?section=records" class="button">View My Records</a>
+
         </div>
       </section>
 
@@ -146,17 +144,56 @@ if ($appointmentAction) {
       <section id="content-appointments" class="dashboard-section" style="<?php echo $section === 'appointments' ? '' : 'display: none'; ?>">
         <h2>My Appointments</h2>
         <p>Here you can view your scheduled and past appointments.</p>
-        <div style="background-color: #f0f4f8; padding: 2rem; border-radius: 0.8rem; margin-top: 2rem">
-          <p><strong>Upcoming:</strong></p>
-          <ul>
-            <li>Dr. John Smith - Cardiology - June 20, 2025, 10:00 AM</li>
-            <li>Dr. Emily Watson - Internal Medicine - June 25, 2025, 02:00 PM</li>
+
+        <div class="appointments-section">
+          <h3>Upcoming Appointment:</h3>
+          <ul class="upcoming-appointments-list">
+            <?php if (!empty($upcomingAppointments)): ?>
+              <?php foreach ($upcomingAppointments as $appt): ?>
+                <li>
+                  <?php echo htmlspecialchars($appt['doctor_name']); ?> -
+                  <?php echo htmlspecialchars($appt['specialty']); ?> -
+                  <?php echo date('F j, Y', strtotime($appt['appointment_date'])); ?>,
+                  <?php echo date('g:i A', strtotime($appt['appointment_time'])); ?>
+                  (<span style="<?php echo $appt['status'] === 'Pending' ? 'color:red' : 'color:green' ?>"><?php echo htmlspecialchars($appt['status']); ?></span>)
+                </li>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <li>No upcoming appointments.</li>
+            <?php endif; ?>
           </ul>
-          <p style="margin-top: 1.5rem"><strong>Past:</strong></p>
-          <ul>
-            <li>Dr. Sarah Chen - Dermatology - May 15, 2025, 2:00 PM</li>
-            <li>Dr. Michael Lee - Orthopedics - April 10, 2025, 09:00 AM</li>
-          </ul>
+
+          <h3 class="past-app-header">Past Appointment:</h3>
+          <?php if (!empty($pastAppointments)): ?>
+            <div class="table-container">
+              <table class="table data-table ">
+                <thead>
+                  <tr>
+                    <th>Doctor</th>
+                    <th>Specialty</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($pastAppointments as $appt): ?>
+                    <tr>
+                      <td><?php echo htmlspecialchars($appt['doctor_name']); ?></td>
+                      <td><?php echo htmlspecialchars($appt['specialty']); ?></td>
+                      <td><?php echo date('F j, Y', strtotime($appt['appointment_date'])); ?></td>
+                      <td><?php echo date('g:i A', strtotime($appt['appointment_time'])); ?></td>
+                      <td style="<?php echo $appt['status'] === 'Pending' ? 'color:red' : 'color:green' ?>">
+                        <?php echo htmlspecialchars($appt['status']); ?>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+          <?php else: ?>
+            <p>No past appointments.</p>
+          <?php endif; ?>
         </div>
       </section>
 
@@ -187,42 +224,81 @@ if ($appointmentAction) {
       </section>
 
       <section id="content-appointment-form" class="dashboard-section" style="<?php echo $section === 'appointment_form' ? '' : 'display: none'; ?>">
-        <h2>Book Appointment</h2>
-        <?php if ($appointmentDoctor): ?>
-          <form method="POST" action="../../controller/submit_appointment.php">
-            <input type="hidden" name="doctor_id" value="<?php echo htmlspecialchars($appointmentDoctor['did']); ?>">
-            <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($id); ?>">
+        <div class="appointment-section">
+          <h2>Book Appointment</h2>
+          <?php if ($appointmentDoctor): ?>
+            <form method="POST" action="../../controller/submit_appointment.php">
+              <input type="hidden" name="doctor_id" value="<?php echo htmlspecialchars($appointmentDoctor['did']); ?>">
+              <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($user_info['pid']); ?>">
 
-            <div class="form-group">
-              <label>Doctor:</label>
-              <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['fname']); ?>" disabled>
-            </div>
-            <div class="form-group">
-              <label>Specialty:</label>
-              <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['specialty']); ?>" disabled>
-            </div>
-            <div class="form-group">
-              <label>Patient:</label>
-              <input type="text" value="<?php echo htmlspecialchars($fname); ?>" disabled>
-            </div>
-            <div class="form-group">
-              <label>Your Phone:</label>
-              <input type="text" value="<?php echo htmlspecialchars($phone); ?>" disabled>
-            </div>
-            <div class="form-group">
-              <label>Appointment Date:</label>
-              <input type="date" name="appointment_date" required>
-            </div>
-            <div class="form-group">
-              <label>Preferred Time:</label>
-              <input type="time" name="appointment_time" required>
-            </div>
+              <div class="profile-form-row">
+                <div class="form-group">
+                  <label>Doctor:</label>
+                  <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['fname']); ?>" disabled>
+                </div>
+                <div class="form-group">
+                  <label>Specialty:</label>
+                  <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['specialty']); ?>" disabled>
+                </div>
+              </div>
+              <div class="available-time-container form-group profile-form-row">
+                <label>Doctor Available Time:</label>
+                <input type="text" class="available-time" value="<?php echo htmlspecialchars($availablityDoctor); ?>" disabled>
+              </div>
+              <div class="form-group">
+                <label>Doctor Fees:</label>
+                <input type="text" value="<?php echo htmlspecialchars($appointmentDoctor['fees'] ?? 'Not specified'); ?>" disabled>
+              </div>
+              <div class="profile-form-row">
+                <div class="form-group">
+                  <label>Patient Name:</label>
+                  <input class="appointmentInput" type="text" name="patient_name" value="<?php echo htmlspecialchars($user_info['fname']); ?>">
+                </div>
 
-            <input type="submit" class="button button-secondary" value="Proceed to Payment">
-          </form>
-        <?php else: ?>
-          <p>Doctor not found.</p>
-        <?php endif; ?>
+                <div class="form-group">
+                  <label>Your Phone:</label>
+                  <input class="appointmentInput" type="text" name="patient_phone" value="<?php echo htmlspecialchars($phone); ?>">
+                </div>
+              </div>
+              <!-- <div class="profile-form-row"> -->
+                <div class="form-group">
+                  <label for="gender">Gender:</label>
+                  <select class="appointmentInput" id="gender" name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              <!-- </div> -->
+
+              <div class="form-group">
+                <label>Appointment Date:</label>
+                <input type="date" name="appointment_date" required>
+              </div>
+              <div class="form-group">
+                <label>Preferred Time:</label>
+                <input type="time" name="appointment_time" required>
+              </div>
+
+              <input type="submit" class="button button-secondary" value="Appointment">
+            </form>
+          <?php else: ?>
+            <p>Doctor not found.</p>
+          <?php endif; ?>
+        </div>
+        <?php
+        if (isset($_SESSION['errorSubmitAppointment']) && is_array($_SESSION['errorSubmitAppointment'])) {
+          foreach ($_SESSION['errorSubmitAppointment'] as $error) {
+            echo '<div class="message-box message-error">' . htmlspecialchars($error) . '</div>';
+          }
+          unset($_SESSION['errorSubmitAppointment']);
+        }
+        if (isset($_SESSION['successSubmitAppointment'])) {
+          echo '<div class="message-box message-success">' . htmlspecialchars($_SESSION['successSubmitAppointment']) . '</div>';
+          unset($_SESSION['successSubmitAppointment']);
+        }
+        ?>
       </section>
 
       <!-- Records -->
@@ -256,12 +332,12 @@ if ($appointmentAction) {
           <!-- <form id="profileForm" method="POST" action="../../controller/upddate_patients_con.php"> -->
 
           <form id="profileForm" onsubmit="return validateProfileForm()" method="POST" action="../../controller/upddate_patients_con.php">
-            <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($id); ?>" />
+            <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($user_info['pid']); ?>" />
 
             <div class="profile-form-row">
               <div class="form-group">
                 <label for="profileName">Full Name:</label>
-                <input type="text" id="profileName" name="fullname" value="<?php echo htmlspecialchars($fname); ?>" <?php echo $editMode ? '' : 'disabled'; ?> />
+                <input type="text" id="profileName" name="fullname" value="<?php echo htmlspecialchars($user_info['fname']); ?>" <?php echo $editMode ? '' : 'disabled'; ?> />
               </div>
               <div class="form-group">
                 <label for="profilePhone">Phone Number:</label>
@@ -271,28 +347,28 @@ if ($appointmentAction) {
 
             <div class="form-group">
               <label for="profileEmail">Email:</label>
-              <input type="email" id="profileEmail" name="email" value="<?php echo htmlspecialchars($email); ?>" <?php echo $editMode ? '' : 'disabled'; ?> />
+              <input type="email" id="profileEmail" name="email" value="<?php echo htmlspecialchars($user_info['email']); ?>" <?php echo $editMode ? '' : 'disabled'; ?> />
             </div>
 
             <div class="form-group">
               <label for="profileAddress">Address:</label>
-              <textarea id="profileAddress" rows="2" name="address" <?php echo $editMode ? '' : 'disabled'; ?>><?php echo htmlspecialchars($address); ?></textarea>
+              <textarea id="profileAddress" rows="2" name="address" <?php echo $editMode ? '' : 'disabled'; ?>><?php echo htmlspecialchars($user_info['address']); ?></textarea>
             </div>
 
             <div class="profile-form-row">
               <div class="form-group">
                 <label for="profileGender">Gender:</label>
                 <select id="profileGender" name="gender" <?php echo $editMode ? '' : 'disabled'; ?>>
-                  <option value="male" <?php if ($gender === "male") echo "selected"; ?>>Male</option>
-                  <option value="female" <?php if ($gender === "female") echo "selected"; ?>>Female</option>
-                  <option value="other" <?php if ($gender === "other") echo "selected"; ?>>Other</option>
+                  <option value="male" <?php if ($user_info['gender'] === "male") echo "selected"; ?>>Male</option>
+                  <option value="female" <?php if ($user_info['gender'] === "female") echo "selected"; ?>>Female</option>
+                  <option value="other" <?php if ($user_info['gender'] === "other") echo "selected"; ?>>Other</option>
                 </select>
               </div>
             </div>
 
             <div class="form-group">
               <label for="profileDob">Date of Birth:</label>
-              <input type="date" id="profileDob" name="dob" value="<?php echo htmlspecialchars($dob); ?>" <?php echo $editMode ? '' : 'disabled'; ?> />
+              <input type="date" id="profileDob" name="dob" value="<?php echo htmlspecialchars($user_info['dob']); ?>" <?php echo $editMode ? '' : 'disabled'; ?> />
             </div>
 
             <div class="profile-action-buttons">
@@ -340,26 +416,22 @@ if ($appointmentAction) {
               <button type="submit" class="button">Change Password</button>
             </form>
             <?php
-            if (isset($_SESSION['errorPassChange']) && is_array($_SESSION['errorPassChange'])) {
+            if (isset($_SESSION['errorPassChange'])) {
               foreach ($_SESSION['errorPassChange'] as $error) {
                 echo '<div class="message-box message-error">' . htmlspecialchars($error) . '</div>';
               }
-              unset($_SESSION['successPassChange']);
-            } elseif (isset($_SESSION['successPassChange'])) {
+              unset($_SESSION['errorPassChange']); // <-- Add this line to clear old errors
+            }
+
+            if (isset($_SESSION['successPassChange'])) {
               echo '<div class="message-box message-success">' . htmlspecialchars($_SESSION['successPassChange']) . '</div>';
               unset($_SESSION['successPassChange']);
             }
             ?>
+
             <!-- <div id="passwordMessage" class="message-box"></div> -->
           </div>
         </div>
-      </section>
-
-      <!-- Logout -->
-      <section id="content-logout" class="dashboard-section" style="<?php echo $section === 'logout' ? '' : 'display: none'; ?>">
-        <h2>Logging Out...</h2>
-
-        <p>Redirecting to login...</p>
       </section>
     </main>
   </div>
@@ -370,6 +442,7 @@ if ($appointmentAction) {
     </div>
   </footer>
   <script src="../../assets/patients/dashbord.js"></script>
+  <script src="../../assets/patients/adddoctor.js"></script>
 </body>
 
 </html>

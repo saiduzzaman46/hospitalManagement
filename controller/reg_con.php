@@ -14,11 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $gender = $_POST['gender'];
     $address = $_POST['address'];
     
-    if (strpos($phone, '+88') === 0) {
-        $phone = substr($phone, 3);
-    }
-
-
     $lastPid = get_last_pid($conn); // Assume this returns something like 'P001'
     if ($lastPid) {
         $num = intval(substr($lastPid, 1)) + 1;

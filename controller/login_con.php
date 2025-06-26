@@ -7,6 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone = $_POST['phone'];
     $password = $_POST['password'];
 
+
+
     try {
         $error = [];
 
@@ -26,17 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $user_ref_id = get_user_ref_id($conn, $phone);
         $role = get_role($conn, $phone);
-        $user_info = get_user_info($conn, $user_ref_id);
+        // $user_info = get_user_info($conn, $user_ref_id);
 
 
         if ($role === 'patient') {
-            setcookie('user_id', $user_info['pid'], time() + 86400, "/");
+            setcookie('user_id', $user_ref_id, time() + 86400, "/");
+
             header("Location: ../view/patients/patientsDash.php");
             exit();
         } else if ($role === 'doctor') {
+            setcookie('doctor_id', $user_ref_id, time() + 86400, "/");
             header("Location: ../view/doctor/doctorDash.php");
             exit();
         } else if ($role === 'admin') {
+            setcookie('admin_id', $user_ref_id, time() + 86400, "/");
             header("Location: ../view/admin/adminDash.php");
             exit();
         }

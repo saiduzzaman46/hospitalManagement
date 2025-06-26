@@ -1,3 +1,4 @@
+/* CSS Reset */
 * {
   padding: 0;
   margin: 0;
@@ -6,208 +7,213 @@
 
 html {
   font-size: 62.5%; /* 1rem = 10px */
-  overflow-x: hidden;
-  height: 100%; /* Ensure html takes full height for sticky positioning */
-}
-
-/* Define CSS variables for consistent spacing and sizing */
-:root {
-  --header-height: 7.2rem; /* Approximate header height (logo + padding) */
-  --footer-height: 6.4rem; /* Approximate footer height (padding + text) */
-  --main-padding-y: 3.2rem; /* Vertical padding around the main content wrapper */
-  --sticky-top-offset: 1.6rem; /* Initial top offset for sticky elements after header */
-  --border-radius-base: 0.4rem; /* Smaller, more utilitarian border-radius */
-  --box-shadow-base: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.08); /* Lighter shadow */
-  --light-bg: #eef2f6; /* Lighter background for sections */
-  --border-color-light: #d1d5db; /* Light grey border color */
-  --primary-blue: #3b82f6;
-  --green-success: #10b981;
-  --red-error: #ef4444;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  height: 100%;
 }
 
 body {
   font-family: "Inter", sans-serif;
-  background-color: #f1f5f9; /* Slightly more industrial background */
-  color: #334155;
+  background-color: #f1f5f9; /* Light gray background */
+  color: #334155; /* Dark slate gray text */
   line-height: 1.6;
   font-size: 1.6rem;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; /* Ensure body takes full viewport height */
 }
 
+/* Define CSS variables for consistent spacing, sizing, and colors */
+:root {
+  --header-height: 7.2rem;
+  --footer-height: 6.4rem;
+  --section-padding: 2.8rem; /* Consistent padding for sections */
+  --gap-spacing: 2.4rem; /* Standard gap between major components */
+  --border-radius-base: 0.8rem; /* Slightly larger rounded corners for modern look */
+  --box-shadow-subtle: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08); /* Refined shadow */
+  --light-bg: #ffffff; /* White background for cards/sections */
+  --dark-section-bg: #f9fafb; /* Very light gray for forms/inner sections */
+  --border-color-light: #e5e7eb; /* Lighter border color */
+  --primary-blue: #3b82f6; /* Main brand blue */
+  --primary-blue-dark: #2563eb; /* Darker blue on hover */
+  --dark-blue: #1e40af; /* Even darker blue for accents/text */
+  --green-success: #10b981; /* Success green */
+  --green-success-dark: #059669; /* Darker success green */
+  --red-error: #ef4444; /* Error red */
+  --red-error-dark: #dc2626; /* Darker error red */
+  --text-color-primary: #1e293b; /* Primary heading text */
+  --text-color-secondary: #475569; /* Secondary text */
+}
+
+/* Base container for content width */
 .container {
-  max-width: 120rem; /* Max width for content (1200px) */
-  margin: 0 auto;
-  padding: 0 2rem; /* 20px padding on sides */
+  max-width: 140rem; /* Increased max-width for more content space */
+  /* margin: 0 auto;
+  padding: 0 2rem; Side padding for smaller screens */
 }
 
+/* Headings */
 h1,
 h2,
 h3 {
-  color: #1e293b;
-  margin-bottom: 1.6rem; /* 16px */
+  color: var(--text-color-primary);
+  margin-bottom: 1.6rem;
   line-height: 1.2;
 }
-
 h1 {
-  font-size: 3.6rem;
+  font-size: 3.8rem;
   font-weight: 700;
   text-align: center;
 }
-
 h2 {
-  font-size: 2.8rem;
+  font-size: 3rem;
   font-weight: 600;
-  margin-bottom: 2.4rem;
+  margin-bottom: var(--gap-spacing);
 }
-
 h3 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 600;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.6rem;
 }
-
 p {
   margin-bottom: 1.6rem;
 }
 
+/* Buttons */
 .button {
-  display: inline-block;
-  padding: 1rem 2rem; /* Slightly smaller padding */
-  background-color: var(--primary-blue); /* Blue for primary actions */
+  display: inline-flex; /* Use flex for vertical alignment of icon/text if needed */
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1.2rem 2.4rem; /* Slightly more padding */
+  background-color: var(--primary-blue);
   color: white;
   text-decoration: none;
   border-radius: var(--border-radius-base);
   font-weight: 600;
-  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.1s ease;
-  font-size: 1.5rem; /* Slightly smaller font */
+  transition: all 0.2s ease; /* Smooth transition for all properties */
+  font-size: 1.6rem; /* Slightly larger font */
   border: none;
   cursor: pointer;
-  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1); /* Consistent shadow for buttons */
+  box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.15); /* More pronounced shadow */
 }
-
 .button:hover {
-  background-color: #2563eb; /* Darker blue */
-  transform: translateY(-0.1rem); /* Subtle lift */
-  box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.15);
+  background-color: var(--primary-blue-dark);
+  transform: translateY(-0.2rem); /* Lift effect */
+  box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
 }
-
 .button-secondary {
-  background-color: var(--green-success); /* Green */
+  background-color: var(--green-success);
 }
-
 .button-secondary:hover {
-  background-color: #059669; /* Darker green */
+  background-color: var(--green-success-dark);
 }
-
 .button-danger {
-  background-color: var(--red-error); /* Red */
+  background-color: var(--red-error);
 }
 .button-danger:hover {
-  background-color: #dc2626; /* Darker red */
+  background-color: var(--red-error-dark);
 }
-
 .button-outline {
   background-color: transparent;
-  border: 0.1rem solid var(--primary-blue);
+  border: 0.2rem solid var(--primary-blue); /* Thicker border */
   color: var(--primary-blue);
-  box-shadow: none; /* No shadow for outline buttons */
+  box-shadow: none;
 }
 .button-outline:hover {
-  background-color: #eff6ff; /* Light blue background on hover */
-  color: #2563eb;
-  transform: none; /* No lift */
+  background-color: #e0f2fe; /* Lighter hover for outline */
+  color: var(--primary-blue-dark);
+  transform: none;
   box-shadow: none;
 }
 
+/* Header */
 header {
-  background-color: #ffffff;
-  padding: 1.8rem 0; /* Slightly less padding */
-  box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.08); /* Lighter shadow */
+  background-color: var(--light-bg);
+  padding: 1.8rem 0;
+  box-shadow: var(--box-shadow-subtle);
   position: sticky;
   top: 0;
   z-index: 1000;
   min-height: var(--header-height);
   display: flex;
   align-items: center;
-  border-bottom: 0.1rem solid var(--border-color-light); /* Added border */
+  border-bottom: 0.1rem solid var(--border-color-light);
 }
-
 header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem; /* Side padding for smaller screens */
 }
-
 .logo {
-  font-size: 2.6rem; /* Slightly smaller logo */
+  font-size: 2.8rem; /* Slightly larger logo */
   font-weight: 700;
-  color: var(--primary-blue); /* Changed logo color */
+  color: var(--primary-blue);
   text-decoration: none;
 }
-
 .doctor-info {
   display: flex;
   align-items: center;
-  gap: 0.8rem; /* Smaller gap */
-  font-size: 1.6rem; /* Slightly smaller font */
+  gap: 1rem; /* More space */
+  font-size: 1.7rem; /* Slightly larger text */
   font-weight: 600;
-  color: #4a5568;
+  color: var(--text-color-secondary);
 }
-
 .doctor-info i {
-  font-size: 2rem; /* Slightly smaller icon */
+  font-size: 2.2rem; /* Larger icon */
   color: var(--primary-blue);
 }
-
 .menu-toggle {
-  display: none;
-  font-size: 2.8rem;
-  color: var(--primary-blue); /* Changed color */
+  display: none; /* Hidden by default, shown on mobile */
+  font-size: 3rem;
+  color: var(--primary-blue);
   cursor: pointer;
   padding: 0.5rem;
 }
 
+/* Main Layout */
 .main-wrapper {
-  flex: 1;
+  flex: 1; /* Take remaining vertical space */
   display: flex;
-  justify-content: center;
-  padding: var(--main-padding-y) 0;
+  justify-content: center; /* Center content horizontally */
+  padding: var(--gap-spacing) 0; /* Vertical padding for the whole wrapper */
   width: 100%;
 }
 
 .main-content-area {
   display: flex;
-  gap: 2.4rem;
-  max-width: 120rem;
-  width: 100%;
-  align-items: flex-start;
+  gap: var(--gap-spacing); /* Gap between sidebar and content */
+  width: 100%; /* Take full width of container */
+  align-items: flex-start; /* Align content to the top */
 }
 
+/* Sidebar */
 .sidebar {
-  width: 25rem;
-  background-color: #ffffff;
-  border-radius: var(--border-radius-base); /* Smaller radius */
-  box-shadow: var(--box-shadow-base); /* Lighter shadow */
-  padding: 2rem; /* Slightly less padding */
-  flex-shrink: 0;
+  width: 28rem; /* Slightly wider sidebar */
+  background-color: var(--light-bg);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-subtle);
+  padding: var(--section-padding) 2rem; /* More top/bottom padding */
+  flex-shrink: 0; /* Prevent shrinking */
+
   position: sticky;
-  top: var(--main-padding-y);
-  max-height: calc(100vh - var(--header-height) - var(--footer-height) - (2 * var(--main-padding-y)));
-  overflow-y: auto;
+  /* Calculate top position dynamically: header height + gap */
+  top: calc(var(--header-height) + var(--gap-spacing));
+  /* Calculate max height: 100vh - header - footer - 2*gap-spacing (for main wrapper) */
+  /* max-height: calc(100vh - var(--header-height) - var(--footer-height) - (2 * var(--gap-spacing))); */
+  overflow-y: auto; /* Enable scrolling for sidebar content */
   transition: transform 0.3s ease-in-out;
-  border: 0.1rem solid var(--border-color-light); /* Added border */
+  border: 0.1rem solid var(--border-color-light);
 }
 
 /* Custom scrollbar for WebKit browsers */
 .sidebar::-webkit-scrollbar,
 .content-display::-webkit-scrollbar,
 .table-container::-webkit-scrollbar {
-  /* Apply to general table containers */
   width: 0.8rem;
-  height: 0.8rem; /* For horizontal scrollbar */
+  height: 0.8rem;
 }
 .sidebar::-webkit-scrollbar-track,
 .content-display::-webkit-scrollbar-track,
@@ -218,470 +224,540 @@ header .container {
 .sidebar::-webkit-scrollbar-thumb,
 .content-display::-webkit-scrollbar-thumb,
 .table-container::-webkit-scrollbar-thumb {
-  background: #a1a1aa; /* More neutral scrollbar */
+  background: #c1c1c1; /* Lighter scrollbar */
   border-radius: 0.4rem;
 }
 .sidebar::-webkit-scrollbar-thumb:hover,
 .content-display::-webkit-scrollbar-thumb:hover,
 .table-container::-webkit-scrollbar-thumb:hover {
-  background: #71717a;
+  background: #a1a1aa;
 }
 
 .sidebar h3 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   text-align: center;
-  margin-bottom: 2rem; /* Less margin */
-  color: #1e293b;
+  margin-bottom: 2.4rem; /* More space */
+  color: var(--text-color-primary);
 }
-
 .sidebar-menu {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem; /* Smaller gap */
+  gap: 0.8rem; /* More space between items */
 }
-
 .sidebar-menu li a {
   display: flex;
   align-items: center;
-  gap: 1rem; /* Smaller gap */
-  padding: 1rem 1.4rem; /* Smaller padding */
+  gap: 1.2rem; /* More space */
+  padding: 1.2rem 1.6rem; /* More padding */
   text-decoration: none;
-  color: #4a5568;
-  font-size: 1.6rem; /* Slightly smaller font */
+  color: var(--text-color-secondary);
+  font-size: 1.7rem; /* Slightly larger text */
   border-radius: var(--border-radius-base);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
-
 .sidebar-menu li a:hover,
 .sidebar-menu li a.active {
-  background-color: #dbeafe; /* Lighter blue */
-  color: #1e40af; /* Darker blue text */
+  background-color: #e0f2fe; /* Light blue background for active/hover */
+  color: var(--dark-blue);
   font-weight: 600;
 }
-
 .sidebar-menu li a i {
-  font-size: 1.8rem; /* Slightly smaller icon */
+  font-size: 2rem; /* Larger icon */
   color: var(--primary-blue);
 }
-
 .sidebar-menu li a.active i {
-  color: #1e40af;
+  color: var(--dark-blue);
 }
 
+/* Main Content Display Area */
 .content-display {
-  flex-grow: 1;
-  background-color: #ffffff;
-  border-radius: var(--border-radius-base); /* Smaller radius */
-  box-shadow: var(--box-shadow-base); /* Lighter shadow */
-  padding: 2.8rem; /* Slightly less padding */
-  max-height: calc(100vh - var(--header-height) - var(--footer-height) - (2 * var(--main-padding-y)));
+  flex-grow: 1; /* Take remaining horizontal space */
+  background-color: var(--light-bg);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-subtle);
+  padding: var(--section-padding); /* Consistent section padding */
+  /* Adjust max-height similarly to sidebar to ensure inner scrolling */
+  /* max-height: calc(100vh - var(--header-height) - var(--footer-height) - (2 * var(--gap-spacing))); */
   overflow-y: auto;
-  border: 0.1rem solid var(--border-color-light); /* Added border */
+  border: 0.1rem solid var(--border-color-light);
 }
 
+/* Footer */
 footer {
-  background-color: #2f3e4e; /* Darker, more muted footer */
+  background-color: #2f3e4e; /* Darker footer background */
   color: white;
-  padding: 3rem 0;
+  padding: 2.5rem 0; /* Slightly less padding */
   text-align: center;
-  font-size: 1.3rem; /* Slightly smaller font */
-  margin-top: auto;
+  font-size: 1.4rem;
+  margin-top: auto; /* Push to the bottom */
   min-height: var(--footer-height);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 0.1rem solid #4b5563; /* Added top border */
+  border-top: 0.1rem solid #4b5563;
 }
-
 footer p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75); /* Slightly brighter text */
 }
 
+/* Dashboard Home Section */
 .dashboard-home .summary-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
-  gap: 1.8rem; /* Smaller gap */
-  margin-top: 2rem; /* Less margin */
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); /* Adjusted min-width for cards */
+  gap: 2rem; /* Consistent gap */
+  margin-top: 2rem;
 }
-
 .dashboard-home .card {
-  background-color: var(--light-bg); /* Use light background variable */
-  padding: 1.8rem; /* Less padding */
+  background-color: var(--dark-section-bg); /* Use a slightly darker background for cards */
+  padding: 2rem; /* More padding */
   border-radius: var(--border-radius-base);
   text-align: center;
-  border-left: 0.4rem solid var(--primary-blue); /* Blue accent */
-  box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.05); /* Lighter shadow */
+  border-left: 0.5rem solid var(--primary-blue); /* Thicker border */
+  box-shadow: 0 0.1rem 0.4rem rgba(0, 0, 0, 0.06); /* Subtle shadow */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 0.1rem solid var(--border-color-light); /* Added border */
+  border: 0.1rem solid var(--border-color-light);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
+.dashboard-home .card:hover {
+  transform: translateY(-0.3rem);
+  box-shadow: 0 0.8rem 1.6rem rgba(0, 0, 0, 0.1);
+}
 .dashboard-home .card h4 {
-  font-size: 1.8rem; /* Smaller font */
-  color: #1e293b;
-  margin-bottom: 0.6rem; /* Smaller margin */
+  font-size: 1.9rem;
+  color: var(--text-color-primary);
+  margin-bottom: 0.8rem;
 }
-
 .dashboard-home .card p {
-  font-size: 2.6rem; /* Slightly smaller number */
+  font-size: 3rem; /* Larger numbers */
   font-weight: 700;
-  color: var(--primary-blue);
-  margin-bottom: 1.2rem; /* Smaller margin */
+  color: var(--dark-blue); /* Darker blue for numbers */
+  margin-bottom: 1.6rem;
 }
-
 .dashboard-home .card .button {
   width: fit-content;
   margin: 0 auto;
-  padding: 0.7rem 1.4rem; /* Smaller button padding */
-  font-size: 1.4rem;
-}
-
-/* General Table Styling for Doctor View (used for both patients and appointments) */
-.table-container {
-  /* Renamed from patient-table-container to be generic */
-  background-color: #ffffff;
-  border-radius: var(--border-radius-base);
-  box-shadow: var(--box-shadow-base);
-  overflow-x: auto; /* Allows horizontal scrolling for table on small screens */
-  margin-top: 2.4rem;
-  border: 0.1rem solid var(--border-color-light); /* Consistent border */
-}
-
-.data-table {
-  /* Renamed from patient-table to be generic */
-  width: 100%;
-  border-collapse: collapse; /* Removes space between borders */
-  text-align: left;
-  font-size: 1.4rem; /* Smaller table font */
-}
-
-.data-table th,
-.data-table td {
-  padding: 1rem 1.4rem; /* Padding for table cells */
-  border-bottom: 0.1rem solid #e5e7eb; /* Lighter border for rows */
-  white-space: nowrap; /* Prevent text wrapping in table cells by default */
-}
-
-.data-table th {
-  background-color: var(--light-bg); /* Use light background variable */
-  font-weight: 600;
-  color: #4b5563; /* Slightly darker text for headers */
-  text-transform: uppercase;
-  font-size: 1.3rem; /* Smaller header font */
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.data-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
-.data-table .action-buttons {
-  display: flex;
-  gap: 0.6rem; /* Smaller gap */
-  justify-content: center;
-}
-
-.data-table .action-buttons .button {
-  padding: 0.5rem 1rem; /* Even smaller buttons */
-  font-size: 1.2rem;
-  box-shadow: none; /* No individual button shadows in table */
-}
-.data-table .action-buttons .button:hover {
-  transform: none; /* No lift on table buttons */
-}
-
-.patient-search-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.4rem; /* Smaller gap */
-  margin-bottom: 2.8rem; /* Less margin */
-  justify-content: flex-start; /* Align to left */
-  text-align: left;
-}
-
-.patient-search-controls .form-group {
-  flex: 1;
-  min-width: 20rem; /* Smaller min-width for mobile flexibility */
-}
-
-.patient-search-controls label {
-  margin-bottom: 0.6rem; /* Smaller margin */
-  font-size: 1.4rem; /* Smaller font */
-  display: block; /* Ensure label takes full width */
-  color: #4b5563;
-}
-
-.patient-search-controls input,
-.patient-search-controls select {
-  width: 100%;
-  padding: 0.8rem; /* Smaller padding */
-  border: 0.1rem solid var(--border-color-light); /* Lighter border */
-  border-radius: var(--border-radius-base);
-  font-size: 1.5rem;
-  color: #334155;
-  outline: none;
-  background-color: #ffffff; /* Explicitly white background */
-}
-.patient-search-controls input:focus,
-.patient-search-controls select:focus {
-  border-color: var(--primary-blue); /* Blue focus */
-  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2); /* Lighter focus shadow */
-}
-
-/* Profile Settings Specific Styles */
-.profile-section,
-.password-change-section {
-  background-color: var(--light-bg);
-  padding: 2.4rem; /* Consistent padding */
-  border-radius: var(--border-radius-base);
-  margin-top: 2rem;
-  text-align: left;
-  margin-bottom: 2rem; /* Consistent margin */
-  border: 0.1rem solid var(--border-color-light);
-  box-shadow: none; /* Remove shadows */
-}
-
-.profile-section h3,
-.password-change-section h3 {
-  margin-bottom: 1.5rem;
-  font-size: 2.2rem; /* Slightly smaller header */
-  border-bottom: 0.1rem solid #cbd5e0; /* Separator for sections */
-  padding-bottom: 1rem;
-}
-
-.profile-section .form-group,
-.password-change-section .form-group {
-  margin-bottom: 1.4rem; /* Smaller margin */
-}
-
-.profile-form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.6rem;
-}
-
-.profile-form-row .form-group {
-  flex: 1;
-  min-width: calc(50% - 0.8rem);
-}
-
-.profile-action-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-.profile-action-buttons .button {
   padding: 0.8rem 1.6rem;
   font-size: 1.5rem;
 }
 
+/* General Table Styling */
+.table-container {
+  background-color: var(--light-bg);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-subtle);
+  overflow-x: auto; /* Horizontal scroll for narrow tables */
+  margin-top: var(--gap-spacing);
+  border: 0.1rem solid var(--border-color-light);
+  /* Set a max-height for vertical scrolling within the table container */
+  max-height: 60vh; /* Adjust as needed, or calculate dynamically if content changes */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 1.5rem;
+}
+.data-table th,
+.data-table td {
+  padding: 1.2rem 1.6rem; /* More padding in table cells */
+  border-bottom: 0.1rem solid var(--border-color-light);
+  white-space: nowrap; /* Prevent text wrapping in cells by default */
+}
+.data-table th {
+  background-color: var(--dark-section-bg); /* Lighter header background */
+  font-weight: 600;
+  color: var(--text-color-secondary);
+  text-transform: uppercase;
+  font-size: 1.3rem;
+  position: sticky;
+  top: 0; /* Sticks to the top of its scrollable container */
+  z-index: 10;
+}
+.data-table tbody tr:hover {
+  background-color: #f0f8ff; /* Very light blue on hover */
+}
+.data-table .action-buttons {
+  display: flex;
+  gap: 0.8rem; /* More space between action buttons */
+  justify-content: flex-start;
+}
+.data-table .action-buttons .button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1.3rem;
+  box-shadow: none;
+}
+.data-table .action-buttons .button:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Forms Styling */
+.form-section {
+  background-color: var(--dark-section-bg); /* Consistent light background for forms */
+  padding: var(--section-padding);
+  border-radius: var(--border-radius-base);
+  margin-top: var(--gap-spacing);
+  text-align: left;
+  margin-bottom: var(--gap-spacing);
+  border: 0.1rem solid var(--border-color-light);
+  box-shadow: var(--box-shadow-subtle);
+}
+.form-section h3 {
+  margin-bottom: 1.8rem;
+  font-size: 2.2rem;
+  border-bottom: 0.1rem solid #d1d5db; /* Slightly darker border */
+  padding-bottom: 1rem;
+}
+.form-group {
+  margin-bottom: 1.8rem;
+} /* More space between form groups */
+.form-group label {
+  display: block;
+  margin-bottom: 0.8rem; /* More space between label and input */
+  font-size: 1.5rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem 1.2rem; /* More padding */
+  border: 0.1rem solid var(--border-color-light);
+  border-radius: var(--border-radius-base);
+  font-size: 1.6rem; /* Larger font for inputs */
+  color: #334155;
+  outline: none;
+  background-color: var(--light-bg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.25); /* Stronger focus ring */
+}
+.form-actions {
+  display: flex;
+  gap: 1.2rem; /* More space between action buttons */
+  justify-content: flex-end;
+  margin-top: 2.4rem; /* More top margin */
+}
+
+.timing-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-top: 0.8rem;
+}
+
+.timing-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #f9fafb;
+  padding: 0.6rem 1.2rem;
+  border: 0.1rem solid var(--border-color-light);
+  border-radius: 0.4rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.timing-options input[type="checkbox"] {
+  accent-color: var(--primary-blue);
+  transform: scale(1.2);
+}
+
+.timing-options label:hover {
+  background-color: #e0f2fe;
+  border-color: var(--primary-blue);
+}
+
+
+/* Message Boxes */
 .message-box {
-  margin-top: 1.6rem;
-  padding: 1.2rem;
+  margin-top: 2rem; /* More margin */
+  padding: 1.4rem; /* More padding */
   border-radius: var(--border-radius-base);
   text-align: center;
   font-weight: 500;
-  display: none;
-  font-size: 1.4rem;
+  display: none; /* Controlled by JS */
+  font-size: 1.5rem;
+  border-left: 0.5rem solid; /* Border on the left for visual emphasis */
 }
-
 .message-success {
   background-color: #d1fae5;
   color: #065f46;
-  border: 0.1rem solid #34d399;
+  border-color: var(--green-success);
 }
-
 .message-error {
   background-color: #fee2e2;
   color: #991b1b;
-  border: 0.1rem solid #ef4444;
+  border-color: var(--red-error);
 }
 
-/* Prescriptions Section specific styles */
-#content-prescriptions h3 {
+/* Profile and Password Sections (inheriting from form-section) */
+.profile-section,
+.password-change-section {
+  /* Already uses .form-section styles, ensuring consistency */
+}
+.profile-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-spacing); /* Consistent gap */
+}
+.profile-form-row .form-group {
+  flex: 1;
+  min-width: calc(50% - (var(--gap-spacing) / 2)); /* Account for gap */
+}
+.profile-action-buttons {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: flex-end;
+  margin-top: 2.4rem;
+}
+
+/* Patient Records & Prescription Details */
+.patient-records-details,
+.prescription-details {
+  background-color: var(--dark-section-bg); /* Consistent light background */
+  padding: var(--section-padding);
+  border-radius: var(--border-radius-base);
+  margin-top: var(--gap-spacing);
+  border: 0.1rem solid var(--border-color-light);
+  box-shadow: var(--box-shadow-subtle);
+}
+.prescription-details ul {
+  list-style: none;
+  padding: 0;
+}
+.prescription-details li {
+  padding: 1.2rem 0;
+  border-bottom: 0.1rem dashed #cbd5e0; /* Dashed thinner border */
+  font-size: 1.6rem;
+}
+.prescription-details li:last-child {
+  border-bottom: none;
+}
+.prescription-details li strong {
+  color: var(--text-color-primary);
+}
+
+.action-area {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 1.2rem;
+  margin-top: 2.4rem;
+  justify-content: flex-end;
+}
+.patient-search-controls {
+  /* This targets the search input in "My Patients" */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
   margin-bottom: 2rem;
 }
-#content-prescriptions .prescription-details {
-  background-color: var(--light-bg);
-  padding: 2rem;
-  border-radius: var(--border-radius-base);
-  border: 0.1rem solid var(--border-color-light);
-  margin-top: 2rem;
-}
-#content-prescriptions .prescription-details p {
-  margin-bottom: 1rem;
-}
-#content-prescriptions .prescription-details strong {
-  color: #1e293b;
-}
-#content-prescriptions .action-area {
-  margin-top: 3rem;
-  text-align: center;
+.patient-search-controls .form-group {
+  flex: 1;
+  min-width: 280px; /* Base min-width */
 }
 
-/* New Prescription Form styles */
-#content-add-prescription .form-section {
-  background-color: var(--light-bg);
-  padding: 2.4rem;
-  border-radius: var(--border-radius-base);
-  border: 0.1rem solid var(--border-color-light);
+/* NEW: Container for the search bar and the Today's Appointments h3 */
+.appointments-header-controls {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap */
+  justify-content: space-between; /* Space out search bar and heading */
+  align-items: center; /* Vertically align items */
+  margin-bottom: var(--gap-spacing); /* Space below this header block */
+  gap: 1.6rem; /* Gap between items when they are on the same line */
 }
-#content-add-prescription .form-group {
-  margin-bottom: 1.4rem;
-}
-#content-add-prescription .form-group label {
-  display: block;
-  margin-bottom: 0.6rem;
-  font-size: 1.4rem;
-  color: #4b5563;
-  font-weight: 500;
-}
-#content-add-prescription .form-group input,
-#content-add-prescription .form-group textarea,
-#content-add-prescription .form-group select {
-  width: 100%;
-  padding: 0.8rem;
+
+/* NEW: Style for the search bar within appointments (using .patient-search-controls directly) */
+.appointments-header-controls #searchBar {
+  flex-grow: 1; /* Allow search bar to grow and take available space */
+  min-width: 250px; /* Minimum width before wrapping */
+  max-width: 400px; /* Optional: cap maximum width if needed */
+  /* Inherits general form input styles, so no need to repeat padding, border, etc. */
+  padding: 1rem 1.2rem; /* Ensure consistent input padding */
   border: 0.1rem solid var(--border-color-light);
   border-radius: var(--border-radius-base);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: #334155;
   outline: none;
-  background-color: #ffffff;
+  background-color: var(--light-bg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-#content-add-prescription .form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
+.appointments-header-controls #searchBar:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.25);
 }
 
-/* Mobile specific styles */
+/* NEW: Style for the 'Today's Appointments' summary area */
+.appointments-header-controls .appointments-today-summary {
+  display: flex; /* Use flex to align h3 and count */
+  align-items: baseline; /* Align text baselines */
+  gap: 0.8rem; /* Small gap between h3 and count */
+  flex-shrink: 0; /* Prevent it from shrinking too much */
+}
+
+/* NEW: Ensure the h3 within the summary doesn't wrap its text and has no extra margin */
+.appointments-header-controls .appointments-today-summary h3 {
+  margin-bottom: 0; /* Remove default h3 bottom margin */
+  white-space: nowrap; /* Keep text on single line */
+  font-size: 2.2rem; /* Keep consistent with other h3s */
+}
+
+/* NEW: Adjust the count display for Today's Appointments */
+.appointments-header-controls .appointments-today-summary #todayAppointmentsCountDisplay {
+  font-size: 2.2rem; /* Match h3 font size */
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+/* Responsive Design */
 @media (max-width: 992px) {
+  .container {
+    padding: 0 1.5rem;
+  } /* Reduce padding on smaller screens */
+
   header .container {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2rem;
   }
-
   .menu-toggle {
-    display: block; /* Show hamburger icon */
+    display: block;
   }
 
   .sidebar {
     position: fixed;
     top: 0;
-    left: -25rem; /* Hide sidebar off-screen initially */
-    height: 100vh; /* Full viewport height for sliding menu */
-    max-height: 100vh; /* Override max-height for mobile sidebar */
-    z-index: 1050; /* Above overlay */
-    box-shadow: 0.5rem 0 1.5rem rgba(0, 0, 0, 0.1);
-    padding-top: var(--header-height); /* Push content down from fixed header */
-    transform: translateX(0); /* Default hidden state (no transform) */
+    left: -28rem; /* Hide off-screen */
+    width: 28rem; /* Explicit width */
+    height: 100vh; /* Full viewport height */
+    max-height: 100vh; /* Override sticky calculations */
+    z-index: 1050;
+    box-shadow: 0.5rem 0 1.5rem rgba(0, 0, 0, 0.2); /* Stronger shadow when open */
+    padding-top: var(--header-height); /* Push content below header */
+    transform: translateX(0); /* Default hidden state */
   }
-
   .sidebar.active {
-    transform: translateX(100%); /* Slide in effect */
+    transform: translateX(100%); /* Slide in from left */
   }
 
   .main-wrapper {
-    padding: 0; /* Remove vertical padding from main wrapper on mobile */
+    padding: 0; /* Remove padding from main wrapper on mobile, content-area handles it */
   }
-
   .main-content-area {
-    flex-direction: column;
-    padding: 2.4rem 2rem; /* Add padding directly to main-content-area */
-    gap: 0; /* Remove gap when stacked */
+    flex-direction: column; /* Stack sidebar and content */
+    padding: 2.4rem 1.5rem; /* Padding for the content area itself */
+    gap: var(--gap-spacing); /* Maintain gap */
   }
-
   .content-display {
     width: 100%;
-    padding: 2.4rem;
-    /* Remove max-height and overflow-y: auto for mobile content display
-                   as the entire body will scroll when sidebar is closed.
-                   Scroll will be handled by the main body. */
-    max-height: none;
-    overflow-y: visible;
+    max-height: none; /* Allow content to grow */
+    overflow-y: visible; /* Let browser handle scrolling for full page if content overflows */
+    padding: var(--section-padding); /* Maintain section padding */
   }
-
   .overlay {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1040; /* Below sidebar, above content */
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    z-index: 1040;
   }
   .overlay.active {
     display: block;
   }
 
   .dashboard-home .summary-cards {
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); /* Adjust cards for smaller screens */
   }
-
+  .profile-form-row {
+    flex-direction: column;
+    gap: 0; /* Remove gap when stacked */
+  }
+  .profile-form-row .form-group {
+    min-width: 100%; /* Full width */
+  }
+  .action-area {
+    justify-content: flex-start;
+    flex-direction: column; /* Stack action buttons */
+  }
+  .action-area .button {
+    width: 100%;
+  }
   .patient-search-controls {
     flex-direction: column;
   }
-
-  .profile-form-row {
-    flex-direction: column;
-    gap: 0;
+  .patient-search-controls .form-group {
+    min-width: 100%;
   }
 
-  .profile-form-row .form-group {
-    min-width: 100%;
+  /* NEW: Adjust appointments header controls for small screens */
+  .appointments-header-controls {
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align stacked items to the left */
+    gap: 1.2rem; /* Smaller gap when stacked */
+  }
+  .appointments-header-controls #searchBar {
+    max-width: 100%; /* Take full width when stacked */
+  }
+  .appointments-header-controls .appointments-today-summary {
+    width: 100%; /* Take full width */
+    justify-content: flex-start; /* Align summary text to the left */
   }
 }
 
 @media (max-width: 768px) {
   html {
-    font-size: 58%;
-  }
-
-  .doctor-info {
-    font-size: 1.6rem;
-  }
-
-  .doctor-info i {
-    font-size: 2rem;
-  }
-
+    font-size: 56%;
+  } /* Further reduce base font size */
   h1 {
-    font-size: 3rem;
+    font-size: 3.2rem;
   }
-
   h2 {
-    font-size: 2.4rem;
+    font-size: 2.6rem;
   }
-
-  /* On smaller screens, allow table to overflow horizontally */
+  h3 {
+    font-size: 2.1rem;
+  }
+  .doctor-info {
+    font-size: 1.5rem;
+  }
+  .doctor-info i {
+    font-size: 1.9rem;
+  }
   .table-container {
-    /* Apply to general table containers */
+    /* Ensure horizontal scroll is main scroll for tables on smaller screens */
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
-  /* .data-table th,
+  .data-table th,
   .data-table td {
-    Removed white-space: nowrap here to allow wrapping if desired on very small screens,
-                   but overflow-x: auto on container still ensures all content is visible.
-  } */
+    padding: 1rem 1.2rem; /* Reduce padding slightly */
+  }
 }
 
 @media (max-width: 480px) {
   html {
-    font-size: 55%;
-  }
-
+    font-size: 53%;
+  } /* Smallest font size */
   .container {
-    padding: 0 1.5rem;
-  }
+    padding: 0 1rem;
+  } /* Minimal padding */
+  .button {
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+  } /* Adjust button size */
 }

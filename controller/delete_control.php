@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../config/connection.php';
-require_once '../model/delete_user_info.php';
+require_once '../model/delete_model.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -47,6 +47,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } else {
         $_SESSION['deleteError'] = "Invalid request.";
+    }
+
+    if(isset($_POST['appointment_id'])) {
+        $appointment_id = $_POST['appointment_id'];
+
+        // Validate appointment ID
+        if (empty($appointment_id)) {
+            $_SESSION['deleteError'] = "Appointment ID is required.";
+            header("Location: ../view/admin/adminDash.php?section=appointments");
+            exit;
+        }
+
+        // Delete appointment information
+        if (delete_appointment_info($conn, $appointment_id)) {
+            $_SESSION['deleteSuccess'] = "Appointment deleted successfully.";
+        } else {
+            $_SESSION['deleteError'] = "Failed to delete appointment. Please try again.";
+        }
+        header("Location: ../view/admin/adminDash.php?section=appointments");
+        exit;
     }
 } else {
     $_SESSION['deleteError'] = "Invalid request.";

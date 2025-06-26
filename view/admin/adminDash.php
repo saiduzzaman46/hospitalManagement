@@ -1,37 +1,30 @@
+<script>
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+</script>
+
+
 <?php
 session_start();
-require_once '../../config/connection.php';
 
-$admin_id = 'ADMIN001';
+if (!isset($_COOKIE['admin_id'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
+
+require_once '../../model/admin_model.php';
+
+
 $admin_fname = 'Admin User';
 $admin_email = 'admin@medcare.com';
-$admin_phone = '+1234567890';
-$admin_specialty = 'Administrator';
-$admin_address = '1 Admin Plaza, MedCity';
-$admin_availability = 'Mon-Fri: 9 AM - 5 PM';
-$admin_password_hash = password_hash('defaultadminpass', PASSWORD_DEFAULT); // Dummy hashed password
-
-
 
 // Determine the current section for navigation
 $section = isset($_GET['section']) ? $_GET['section'] : 'home';
-$editMode = isset($_GET['edit']) && $_GET['edit'] == '1'; // For admin profile edit mode
+$editMode = isset($_GET['edit']) && $_GET['edit'] == '1';
 
-
-
-
-
-// Dummy doctor data for demonstration. In a real app, this would be fetched from DB.
-
-
-// Dummy data for doctor to edit (simulating fetching from DB based on ID)
-
-
-
-$appointments = [ // Dummy Data
-    ['id' => 'A001', 'patientId' => 'P001', 'patientName' => 'Alice Johnson', 'doctorId' => 'D001', 'doctorName' => 'Dr. Emily Watson', 'date' => '2025-06-20', 'time' => '10:00', 'status' => 'Confirmed', 'paymentStatus' => 'Paid'],
-    ['id' => 'A002', 'patientId' => 'P002', 'patientName' => 'Bob Williams', 'doctorId' => 'D002', 'doctorName' => 'Dr. John Smith', 'date' => '2025-06-20', 'time' => '14:30', 'status' => 'Pending', 'paymentStatus' => 'Pending'],
-];
 $specialties = [
     'Cardiology',
     'Pediatrics',
@@ -48,121 +41,32 @@ $specialties = [
     'Dentistry'
 ];
 
+$patients = adminDashboardPatients();
+$doctors = adminDashboardDoctors();
+$appointments = adminDashboardAppointments();
 
-// Fetch patients data
-$query_patients = "SELECT p.pid, p.fname, p.email, p.address, p.gender, p.dob, l.phone
-          FROM patientsregister AS p
-          JOIN login AS l ON p.pid = l.user_ref_id
-          WHERE l.role = 'patient'";
-
-$result_patients = mysqli_query($conn, $query_patients);
-$patients = [];
-
-if ($result_patients && mysqli_num_rows($result_patients) > 0) {
-    while ($row = mysqli_fetch_assoc($result_patients)) {
-        $patients[] = $row;
-    }
-} else {
-    // Handle case where no patients are found
-    $patients = [];
-}
-/* For debugging: echo patients array */
-// echo '<pre>'; print_r($patients); echo '</pre>';
-
-// --- Logic for Patient Edit Section ---
-$patientEditAction = isset($_GET['action']) && $_GET['action'] === 'edit_patient';
-$patientToEdit = null;
-if ($section === 'patients' && $patientEditAction && isset($_GET['id'])) {
-    $patientEditId = htmlspecialchars($_GET['id']);
-    foreach ($patients as $patient) {
-        if ($patient['pid'] === $patientEditId) {
-            $patientToEdit = $patient;
-            break;
-        }
-    }
-}
-
-$query_doctors = "SELECT d.did, d.fname, d.specialty, d.email,d.fees,d.info, d.availablity,l.phone 
-                    FROM doctorregister AS d JOIN login AS l ON d.did = l.user_ref_id WHERE l.role = 'doctor';";
-$result_doctors = mysqli_query($conn, $query_doctors);
-$doctors = [];
-if ($result_doctors && mysqli_num_rows($result_doctors) > 0) {
-    while ($row = mysqli_fetch_assoc($result_doctors)) {
-        $doctors[] = $row;
-    }
-} else {
-    // Handle case where no doctors are found
-    $doctors = [];
-}
-
-// echo '<pre>';
-// print_r($doctors);
-// echo '</pre>';
-
-// --- Logic for Doctor Edit Section ---
-$doctorEditAction = (isset($_GET['action']) && $_GET['action'] === 'edit_doctor' && isset($_GET['id']));
+// 
 $doctorToEdit = null;
-
-if ($doctorEditAction) {
-    $editId = $_GET['id'];
-    foreach ($doctors as $doctor) {
-        if ($doctor['did'] === $editId) {
-            $doctorToEdit = $doctor;
-            $availability = $doctor['availablity'];
-            [$days, $times] = explode(',', $availability);
-            [$fromDay, $toDay] = array_map('trim', explode('to', $days));
-            [$startTime, $endTime] = array_map('trim', explode('-', $times));
-            $doctorToEdit['fromDay'] = $fromDay;
-            $doctorToEdit['toDay'] = $toDay;
-            $doctorToEdit['startTime'] = $startTime;
-            $doctorToEdit['endTime'] = $endTime;
-            break;
-        }
-    }
+if (isset($_GET['action']) && $_GET['action'] === 'edit_doctor' && isset($_GET['id'])) {
+    $doctorToEdit = get_doctor_by_id($doctors, $_GET['id']);
 }
 
-
-
-
-// --- Logic for Appointment Edit Section ---
-$appointmentEditAction = isset($_GET['action']) && $_GET['action'] === 'edit_appointment';
+// Appointment Edit Logic
 $appointmentToEdit = null;
-if ($section === 'appointments' && $appointmentEditAction && isset($_GET['id'])) {
-    $appointmentEditId = htmlspecialchars($_GET['id']);
-    // In a real application, you'd fetch this from the database:
-    // require_once '../../model/appointment_mod.php';
-    // $appointmentToEdit = get_appointment_by_id($conn, $appointmentEditId);
+if ($section === 'appointments' && isset($_GET['action']) && $_GET['action'] === 'edit_appointment' && isset($_GET['id'])) {
+    $appointmentToEdit = get_appointment_by_id($appointments, $_GET['id']);
+}
 
-    foreach ($appointments as $appointment) {
-        if ($appointment['id'] === $appointmentEditId) {
-            $appointmentToEdit = $appointment;
-            break;
-        }
-    }
+// Patient Edit Logic
+$patientToEdit = null;
+if ($section === 'patients' && isset($_GET['action']) && $_GET['action'] === 'edit_patient' && isset($_GET['id'])) {
+    $patientToEdit = get_patient_by_id($patients, $_GET['id']);
 }
 
 
-$medicineEditAction = ($section === 'medicine' && isset($_GET['action']) && $_GET['action'] == 'edit_medicine' && isset($_GET['id']));
-$medicines = [
-    ['id' => 'M001', 'name' => 'Paracetamol', 'genericName' => 'Acetaminophen', 'dosage' => '500mg', 'form' => 'Tablet', 'strength' => '500mg', 'route' => 'Oral', 'manufacturer' => 'ABC Pharma', 'price' => 5.25, 'stock' => 1000, 'description' => 'Used for pain relief and fever reduction.'],
-    ['id' => 'M002', 'name' => 'Amoxicillin', 'genericName' => 'Amoxycillin Trihydrate', 'dosage' => '250mg/5ml', 'form' => 'Syrup', 'strength' => '250mg/5ml', 'route' => 'Oral', 'manufacturer' => 'XYZ Labs', 'price' => 12.50, 'stock' => 500, 'description' => 'Antibiotic for bacterial infections.'],
-    ['id' => 'M003', 'name' => 'Omeprazole', 'genericName' => 'Omeprazole', 'dosage' => '20mg', 'form' => 'Capsule', 'strength' => '20mg', 'route' => 'Oral', 'manufacturer' => 'HealthCo', 'price' => 8.75, 'stock' => 750, 'description' => 'Reduces stomach acid production.'],
-    ['id' => 'M004', 'name' => 'Betadine', 'genericName' => 'Povidone-iodine', 'dosage' => 'N/A', 'form' => 'Solution', 'strength' => '10%', 'route' => 'Topical', 'manufacturer' => 'MediCare', 'price' => 6.00, 'stock' => 200, 'description' => 'Antiseptic for minor cuts and wounds.']
-];
 
-$medicineToEdit = null;
-if ($medicineEditAction) {
-    $editId = htmlspecialchars($_GET['id']);
-    foreach ($medicines as $medicine) {
-        if ($medicine['id'] === $editId) {
-            $medicineToEdit = $medicine;
-            break;
-        }
-    }
-}
 
-$medicineForms = ['Tablet', 'Syrup', 'Capsule', 'Injection', 'Cream', 'Solution', 'Suspension', 'Powder', 'Ointment', 'Drops'];
-$medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 'Subcutaneous (SC)', 'Rectal', 'Vaginal', 'Nasal', 'Ophthalmic', 'Otic', 'Inhalation'];
+
 
 ?>
 
@@ -205,7 +109,8 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                 <li><a href="?section=appointments" class="menu-item <?php echo $section === 'appointments' ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> Appointment Management</a></li>
                 <li><a href="?section=medicine" class="menu-item <?php echo $section === 'medicine' ? 'active' : ''; ?>"><i class="fas fa-pills"></i> Medicine Management</a></li>
                 <li><a href="?section=profile" class="menu-item <?php echo $section === 'profile' ? 'active' : ''; ?>"><i class="fas fa-user-cog"></i> Profile Settings</a></li>
-                <li><a href="?section=logout" class="menu-item <?php echo $section === 'logout' ? 'active' : ''; ?>"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li> <a href="../../controller/logoutAdmin.php" class="menu-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+
             </ul>
         </aside>
 
@@ -229,7 +134,7 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                         <h4>Total Medicines</h4> <!-- NEW -->
                         <p id="totalMedicinesCount">0</p>
                         <!-- <button class="button" onclick="loadContent('medicines')">View Medicines</button> -->
-                         <a class="button" href="?section=medicine">View Medicines</a>
+                        <a class="button" href="?section=medicine">View Medicines</a>
                     </div>
                     <div class="card">
                         <h4>Today's Appointments</h4>
@@ -251,7 +156,7 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                 <h2>Patient List</h2>
                 <!-- <p>View patient records. Patient creation, editing, and deletion are handled via the backend system.</p> -->
 
-                <div id="viewPatientsSection" style="<?php echo ($section === 'patients' && !$patientEditAction) ? '' : 'display: none'; ?>">
+                <div id="viewPatientsSection" style="<?php echo ($section === 'patients' && !$patientToEdit) ? '' : 'display: none'; ?>">
                     <h3>All Patients</h3>
                     <div class="table-container">
                         <table class="data-table" id="patientTable">
@@ -291,12 +196,12 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                             </tbody>
                         </table>
                     </div>
-                    <form id="deletePatientsForm" method="POST" action="../../controller/delete_user.php" style="display: none;">
+                    <form id="deletePatientsForm" method="POST" action="../../controller/delete_control.php" style="display: none;">
                         <input type="hidden" name="patient_id" id="deletePatientId" />
                     </form>
                 </div>
 
-                <div id="editPatientSection" class="form-section" style="<?php echo ($section === 'patients' && $patientEditAction) ? '' : 'display: none'; ?>">
+                <div id="editPatientSection" class="form-section" style="<?php echo ($section === 'patients' && $patientToEdit) ? '' : 'display: none'; ?>">
                     <h3>Edit Patient Information</h3>
                     <?php if ($patientToEdit): ?>
                         <form id="editPatientForm" method="POST" action="../../controller/upddate_patients_con.php">
@@ -470,7 +375,7 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                     ?>
                 </div>
 
-                <div id="editDoctorSection" class="form-section" style="<?php echo ($doctorEditAction) ? '' : 'display: none'; ?>">
+                <div id="editDoctorSection" class="form-section" style="<?php echo ($doctorToEdit) ? '' : 'display: none'; ?>">
                     <h3>Edit Doctor Information</h3>
                     <?php if ($doctorToEdit): ?>
                         <form id="editDoctorForm" method="POST" action="../../controller/add_doctor_con.php">
@@ -613,7 +518,7 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                             </tbody>
                         </table>
                     </div>
-                    <form id="deleteDoctorForm" method="POST" action="../../controller/delete_user.php" style="display: none;">
+                    <form id="deleteDoctorForm" method="POST" action="../../controller/delete_control.php" style="display: none;">
                         <input type="hidden" name="doctor_id" id="deleteDoctorId" />
                     </form>
                 </div>
@@ -622,181 +527,37 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
 
             <!-- Appointment Management Section -->
             <section id="content-appointments" class="dashboard-section" style="<?php echo $section === 'appointments' ? '' : 'display: none'; ?>">
-                <h2>Appointment Management</h2>
-           
 
-                <div id="createAppointmentSection" class="form-section" style="<?php echo ($section === 'appointments' && isset($_GET['action']) && $_GET['action'] == 'create') ? '' : 'display: none'; ?>">
-                    <h3>Create New Appointment</h3>
-                    <form id="appointmentForm" method="POST" action="../../controller/appointment_con.php">
-                        <input type="hidden" name="action" value="create">
-                        <div class="form-group">
-                            <label for="appointmentPatient">Patient</label>
-                            <select id="appointmentPatient" name="appointmentPatient" required>
-                                <option value="">Select Patient</option>
-                                <?php
-                                $allPatients = [ // Dummy Data for dropdowns
-                                    ['id' => 'P001', 'name' => 'Alice Johnson'],
-                                    ['id' => 'P002', 'name' => 'Bob Williams'],
-                                ];
-                                foreach ($allPatients as $p) {
-                                    echo '<option value="' . htmlspecialchars($p['id']) . '">' . htmlspecialchars($p['name']) . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="appointmentDoctor">Doctor</label>
-                            <select id="appointmentDoctor" name="appointmentDoctor" required>
-                                <option value="">Select Doctor</option>
-                                <?php
-                                $allDoctors = [ // Dummy Data for dropdowns
-                                    ['id' => 'D001', 'name' => 'Dr. Emily Watson'],
-                                    ['id' => 'D002', 'name' => 'Dr. John Smith'],
-                                ];
-                                foreach ($allDoctors as $d) {
-                                    echo '<option value="' . htmlspecialchars($d['id']) . '">' . htmlspecialchars($d['name']) . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="appointmentDate">Date</label>
-                            <input type="date" id="appointmentDate" name="appointmentDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="appointmentTime">Time</label>
-                            <input type="time" id="appointmentTime" name="appointmentTime" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="appointmentStatus">Status</label>
-                            <select id="appointmentStatus" name="appointmentStatus" required>
-                                <option value="Pending">Pending</option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="appointmentPaymentStatus">Payment Status</label>
-                            <select id="appointmentPaymentStatus" name="appointmentPaymentStatus" required>
-                                <option value="Pending">Pending</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Partially Paid">Partially Paid</option>
-                                <option value="Waived">Waived</option>
-                            </select>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="button">Create Appointment</button>
-                        </div>
-                    </form>
-                    <?php
-                    if (isset($_SESSION['appointment_message'])) {
-                        echo '<div id="appointmentFormMessage" class="message-box ' . htmlspecialchars($_SESSION['appointment_message_type']) . '">' . htmlspecialchars($_SESSION['appointment_message']) . '</div>';
-                        unset($_SESSION['appointment_message']);
-                        unset($_SESSION['appointment_message_type']);
-                    }
-                    ?>
-                </div>
-
-                <div id="editAppointmentSection" class="form-section" style="<?php echo ($section === 'appointments' && $appointmentEditAction) ? '' : 'display: none'; ?>">
-                    <h3>Edit Appointment Information</h3>
-                    <?php if ($appointmentToEdit): ?>
-                        <form id="editAppointmentForm" method="POST" action="../../controller/appointment_con.php">
-                            <input type="hidden" name="action" value="update_appointment">
-                            <input type="hidden" name="appointment_id" value="<?php echo htmlspecialchars($appointmentToEdit['id']); ?>">
-                            <div class="form-group">
-                                <label for="editAppointmentPatient">Patient</label>
-                                <select id="editAppointmentPatient" name="appointmentPatient" required>
-                                    <option value="">Select Patient</option>
-                                    <?php
-                                    foreach ($allPatients as $p) {
-                                        $selected = ($p['id'] === $appointmentToEdit['patientId']) ? 'selected' : '';
-                                        echo '<option value="' . htmlspecialchars($p['id']) . '" ' . $selected . '>' . htmlspecialchars($p['name']) . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editAppointmentDoctor">Doctor</label>
-                                <select id="editAppointmentDoctor" name="appointmentDoctor" required>
-                                    <option value="">Select Doctor</option>
-                                    <?php
-                                    foreach ($allDoctors as $d) {
-                                        $selected = ($d['id'] === $appointmentToEdit['doctorId']) ? 'selected' : '';
-                                        echo '<option value="' . htmlspecialchars($d['id']) . '" ' . $selected . '>' . htmlspecialchars($d['name']) . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editAppointmentDate">Date</label>
-                                <input type="date" id="editAppointmentDate" name="appointmentDate" value="<?php echo htmlspecialchars($appointmentToEdit['date']); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editAppointmentTime">Time</label>
-                                <input type="time" id="editAppointmentTime" name="appointmentTime" value="<?php echo htmlspecialchars($appointmentToEdit['time']); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editAppointmentStatus">Status</label>
-                                <select id="editAppointmentStatus" name="appointmentStatus" required>
-                                    <option value="Pending" <?php if ($appointmentToEdit['status'] === "Pending") echo "selected"; ?>>Pending</option>
-                                    <option value="Confirmed" <?php if ($appointmentToEdit['status'] === "Confirmed") echo "selected"; ?>>Confirmed</option>
-                                    <option value="Completed" <?php if ($appointmentToEdit['status'] === "Completed") echo "selected"; ?>>Completed</option>
-                                    <option value="Cancelled" <?php if ($appointmentToEdit['status'] === "Cancelled") echo "selected"; ?>>Cancelled</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editAppointmentPaymentStatus">Payment Status</label>
-                                <select id="editAppointmentPaymentStatus" name="appointmentPaymentStatus" required>
-                                    <option value="Pending" <?php if ($appointmentToEdit['paymentStatus'] === "Pending") echo "selected"; ?>>Pending</option>
-                                    <option value="Paid" <?php if ($appointmentToEdit['paymentStatus'] === "Paid") echo "selected"; ?>>Paid</option>
-                                    <option value="Partially Paid" <?php if ($appointmentToEdit['paymentStatus'] === "Partially Paid") echo "selected"; ?>>Partially Paid</option>
-                                    <option value="Waived" <?php if ($appointmentToEdit['paymentStatus'] === "Waived") echo "selected"; ?>>Waived</option>
-                                </select>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="button button-secondary">Save Changes</button>
-                                <a href="?section=appointments&action=view" class="button button-outline">Cancel</a>
-                            </div>
-                        </form>
-                    <?php else: ?>
-                        <p class="message-box message-error" style="display:block;">Appointment data not found. Please select a valid appointment to edit.</p>
-                        <div class="form-actions">
-                            <a href="?section=appointments&action=view" class="button button-outline">Back to Appointments List</a>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <div id="viewAppointmentsSection" style="<?php echo (!isset($_GET['action']) || $_GET['action'] == 'view' || ($section === 'appointments' && !($appointmentEditAction || (isset($_GET['action']) && $_GET['action'] == 'create')))) ? '' : 'display: none'; ?>">
+                <div id="viewAppointmentsSection" style="<?php echo (!isset($_GET['action']) || $_GET['action'] == 'view' || ($section === 'appointments' && !($patientToEdit || (isset($_GET['action']) && $_GET['action'] == 'create')))) ? '' : 'display: none'; ?>">
                     <h3>All Appointments</h3>
                     <div class="table-container">
                         <table class="data-table" id="appointmentTable">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Patient</th>
-                                    <th>Doctor</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
+                                    <th>Patient Id</th>
+                                    <th>Doctor ID</th>
+                                    <th>Appointment Date</th>
+                                    <th>AppointmentTime</th>
                                     <th>Status</th>
-                                    <th>Payment Status</th>
-                                    <th>Actions</th>
+                                    <th>Created Date</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 foreach ($appointments as $appt) {
                                     echo '<tr>';
-                                    echo '<td>' . htmlspecialchars($appt['id']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($appt['patientName']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($appt['doctorName']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($appt['date']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($appt['time']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($appt['aid']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($appt['patient_id']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($appt['doctor_id']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($appt['appointment_date']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($appt['appointment_time']) . '</td>';
                                     echo '<td>' . htmlspecialchars($appt['status']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($appt['paymentStatus']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($appt['created_at']) . '</td>';
                                     echo '<td><div class="action-buttons">';
-                                    echo '<a href="?section=appointments&action=edit_appointment&id=' . htmlspecialchars($appt['id']) . '" class="button button-outline">Edit</a>';
-                                    echo '<button class="button button-danger" onclick="alert(\'Delete Appointment ID: ' . htmlspecialchars($appt['id']) . ' - Backend action\');">Delete</button>';
+                                    echo '<button class="button" onclick="updateAppointmentStatus(\'' . htmlspecialchars($appt['aid'], ENT_QUOTES) . '\', \'Confirmed\')">Confirm</button>';
+                                    echo '<button class="button button-danger" onclick="deleteAppointment(\'' . htmlspecialchars($appt['aid']) . '\')">Delete</button>';
                                     echo '</div></td>';
                                     echo '</tr>';
                                 }
@@ -807,247 +568,33 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </section>
-
-            <section id="content-medicine" class="dashboard-section" style="<?php echo $section === 'medicine' ? '' : 'display: none'; ?>">
-                <h2>Medicine Management</h2>
-                <p>Add new medicine records, view, or edit existing ones. This data will be crucial for doctor prescriptions.</p>
-                <div class="medicine-management-controls">
-                    <a href="?section=medicine&action=add" class="button <?php echo (isset($_GET['action']) && $_GET['action'] == 'add') ? 'active' : 'button-outline'; ?>">Add Medicine</a>
-                    <a href="?section=medicine&action=view" class="button <?php echo (!isset($_GET['action']) || $_GET['action'] == 'view') ? 'active' : 'button-outline'; ?>">View Medicines</a>
-                </div>
-
-                <div id="addMedicineSection" class="form-section" style="<?php echo ($section === 'medicine' && isset($_GET['action']) && $_GET['action'] == 'add') ? '' : 'display: none'; ?>">
-                    <h3>Add New Medicine</h3>
-                    <form id="medicineForm" method="POST" action="../../controller/medicine_con.php">
-                        <input type="hidden" name="action" value="add_medicine">
-                        <div class="form-group">
-                            <label for="medicineId">Medicine ID</label>
-                            <input type="text" id="medicineId" name="medicineId" placeholder="e.g., M001" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineName">Medicine Name</label>
-                            <input type="text" id="medicineName" name="medicineName" placeholder="e.g., Paracetamol (Brand Name)" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineGenericName">Generic Name</label>
-                            <input type="text" id="medicineGenericName" name="medicineGenericName" placeholder="e.g., Acetaminophen" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineStrength">Strength</label>
-                            <input type="text" id="medicineStrength" name="medicineStrength" placeholder="e.g., 500mg, 250mg/5ml" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineForm">Dosage Form</label>
-                            <select id="medicineForm" name="medicineForm" required>
-                                <option value="">Select Form</option>
-                                <?php foreach ($medicineForms as $form): ?>
-                                    <option value="<?php echo htmlspecialchars($form); ?>"><?php echo htmlspecialchars($form); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineRoute">Route of Administration</label>
-                            <select id="medicineRoute" name="medicineRoute" required>
-                                <option value="">Select Route</option>
-                                <?php foreach ($medicineRoutes as $route): ?>
-                                    <option value="<?php echo htmlspecialchars($route); ?>"><?php echo htmlspecialchars($route); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineManufacturer">Manufacturer</label>
-                            <input type="text" id="medicineManufacturer" name="medicineManufacturer" placeholder="e.g., ABC Pharma" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="medicinePrice">Price ($)</label>
-                            <input type="number" id="medicinePrice" name="medicinePrice" placeholder="e.g., 5.25" required min="0" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineStock">Stock Quantity</label>
-                            <input type="number" id="medicineStock" name="medicineStock" placeholder="e.g., 1000" required min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="medicineDescription">Indications/Description</label>
-                            <textarea id="medicineDescription" name="medicineDescription" rows="3" placeholder="Brief description of the medicine, its uses, and key indications." required></textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="button">Add Medicine</button>
-                        </div>
+                    <form id="deleteAppointmentForm" method="POST" action="../../controller/delete_control.php" style="display: none;">
+                        <input type="hidden" name="appointment_id" id="deleteAppointmentId" />
                     </form>
-                    <?php
-                    if (isset($_SESSION['medicine_message'])) {
-                        echo '<div id="medicineFormMessage" class="message-box ' . htmlspecialchars($_SESSION['medicine_message_type']) . '">' . htmlspecialchars($_SESSION['medicine_message']) . '</div>';
-                        unset($_SESSION['medicine_message']);
-                        unset($_SESSION['medicine_message_type']);
-                    }
-                    ?>
-                </div>
-
-                <div id="editMedicineSection" class="form-section" style="<?php echo ($medicineEditAction) ? '' : 'display: none'; ?>">
-                    <h3>Edit Medicine Information</h3>
-                    <?php if ($medicineToEdit): ?>
-                        <form id="editMedicineForm" method="POST" action="../../controller/medicine_con.php">
-                            <input type="hidden" name="action" value="update_medicine">
-                            <input type="hidden" name="medicine_id" value="<?php echo htmlspecialchars($medicineToEdit['id']); ?>">
-                            <div class="form-group">
-                                <label for="editMedicineName">Medicine Name</label>
-                                <input type="text" id="editMedicineName" name="medicineName" value="<?php echo htmlspecialchars($medicineToEdit['name']); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineGenericName">Generic Name</label>
-                                <input type="text" id="editMedicineGenericName" name="medicineGenericName" value="<?php echo htmlspecialchars($medicineToEdit['genericName']); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineStrength">Strength</label>
-                                <input type="text" id="editMedicineStrength" name="medicineStrength" value="<?php echo htmlspecialchars($medicineToEdit['strength']); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineForm">Dosage Form</label>
-                                <select id="editMedicineForm" name="medicineForm" required>
-                                    <option value="">Select Form</option>
-                                    <?php foreach ($medicineForms as $form): ?>
-                                        <option value="<?php echo htmlspecialchars($form); ?>" <?php if ($medicineToEdit['form'] === $form) echo "selected"; ?>>
-                                            <?php echo htmlspecialchars($form); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineRoute">Route of Administration</label>
-                                <select id="editMedicineRoute" name="medicineRoute" required>
-                                    <option value="">Select Route</option>
-                                    <?php foreach ($medicineRoutes as $route): ?>
-                                        <option value="<?php echo htmlspecialchars($route); ?>" <?php if (isset($medicineToEdit['route']) && $medicineToEdit['route'] === $route) echo "selected"; ?>>
-                                            <?php echo htmlspecialchars($route); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineManufacturer">Manufacturer</label>
-                                <input type="text" id="editMedicineManufacturer" name="medicineManufacturer" value="<?php echo htmlspecialchars($medicineToEdit['manufacturer']); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicinePrice">Price ($)</label>
-                                <input type="number" id="editMedicinePrice" name="medicinePrice" value="<?php echo htmlspecialchars($medicineToEdit['price']); ?>" required min="0" step="0.01">
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineStock">Stock Quantity</label>
-                                <input type="number" id="editMedicineStock" name="medicineStock" value="<?php echo htmlspecialchars($medicineToEdit['stock']); ?>" required min="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="editMedicineDescription">Indications/Description</label>
-                                <textarea id="editMedicineDescription" name="medicineDescription" rows="3"><?php echo htmlspecialchars($medicineToEdit['description']); ?></textarea>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="button button-secondary">Save Changes</button>
-                                <a href="?section=medicine&action=view" class="button button-outline">Cancel</a>
-                            </div>
-                        </form>
-                    <?php else: ?>
-                        <p class="message-box message-error" style="display:block;">Medicine data not found. Please select a valid medicine to edit.</p>
-                        <div class="form-actions">
-                            <a href="?section=medicine&action=view" class="button button-outline">Back to Medicine List</a>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <div id="viewMedicinesSection" style="<?php echo ($section === 'medicine' && (!isset($_GET['action']) || $_GET['action'] == 'view')) ? '' : 'display: none'; ?>">
-                    <h3>Medicine List</h3>
-                  
-                    <div class="table-container">
-                        <table class="data-table" id="medicineTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Generic Name</th>
-                                    <th>Strength</th>
-                                    <th>Form</th>
-                                    <th>Route</th>
-                                    <th>Manufacturer</th>
-                                    <th>Price ($)</th>
-                                    <th>Stock</th>
-                                    <th>Indications/Description</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                if (empty($medicines)) {
-                                    echo '<tr><td colspan="11" style="text-align: center; padding: 2rem;">No medicine records found.</td></tr>';
-                                } else {
-                                    foreach ($medicines as $medicine) {
-                                        echo '<tr>';
-                                        echo '<td>' . htmlspecialchars($medicine['id']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['name']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['genericName']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['strength']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['form']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['route']) . '</td>'; // New 'Route' column
-                                        echo '<td>' . htmlspecialchars($medicine['manufacturer']) . '</td>';
-                                        echo '<td>$' . htmlspecialchars(number_format($medicine['price'], 2)) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['stock']) . '</td>';
-                                        echo '<td>' . htmlspecialchars($medicine['description']) . '</td>'; // Label changed to Indications/Description
-                                        echo '<td><div class="action-buttons">';
-                                        echo '<a href="?section=medicine&action=edit_medicine&id=' . htmlspecialchars($medicine['id']) . '" class="button button-outline">Edit</a>';
-                                        echo '<button class="button button-danger" onclick="confirmAction(\'delete_medicine\', \'' . htmlspecialchars($medicine['id']) . '\')">Delete</button>';
-                                        echo '</div></td>';
-                                        echo '</tr>';
-                                    }
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </section>
+
 
 
             <!-- Admin Profile Section -->
             <section id="content-profile" class="dashboard-section" style="<?php echo $section === 'profile' ? '' : 'display: none'; ?>">
-                <h2>Profile Settings</h2>
-                <p>Update your personal information and manage your account security.</p>
+                <h2>Admin Profile Settings</h2>
+                <p>Manage your account details and security.</p>
 
-                <div class="profile-section">
+                <div class="form-section">
                     <h3>Admin Information</h3>
                     <form id="profileForm" method="POST" action="../../controller/admin_profile_con.php">
                         <input type="hidden" name="admin_id" value="<?php echo htmlspecialchars($admin_id); ?>" />
-
-                        <div class="profile-form-row">
-                            <div class="form-group">
-                                <label for="profileName">Full Name:</label>
-                                <input type="text" id="profileName" name="admin_name" value="<?php echo htmlspecialchars($admin_fname); ?>" <?php echo $editMode ? '' : 'disabled'; ?> required />
-                            </div>
-                            <div class="form-group">
-                                <label for="profilePhone">Phone Number:</label>
-                                <input type="tel" id="profilePhone" name="admin_phone" value="<?php echo htmlspecialchars($admin_phone); ?>" <?php echo $editMode ? '' : 'disabled'; ?> pattern="[+]?[0-9]{10,15}" title="Phone number must be 10-15 digits, optionally starting with a plus sign." required />
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <label for="profileEmail">Email:</label>
+                            <label for="adminName">Admin Name</label>
+                            <input type="text" id="profileName" name="admin_name" value="<?php echo htmlspecialchars($admin_fname); ?>" <?php echo $editMode ? '' : 'disabled'; ?> required />
+
+                        </div>
+                        <div class="form-group">
+                            <label for="adminEmail">Email</label>
                             <input type="email" id="profileEmail" name="admin_email" value="<?php echo htmlspecialchars($admin_email); ?>" <?php echo $editMode ? '' : 'disabled'; ?> required />
+
                         </div>
-
-                        <div class="form-group">
-                            <label for="profileAddress">Address:</label>
-                            <textarea id="profileAddress" rows="2" name="admin_address" <?php echo $editMode ? '' : 'disabled'; ?>><?php echo htmlspecialchars($admin_address); ?></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="profileSpecialty">Role/Specialty:</label>
-                            <input type="text" id="profileSpecialty" name="admin_specialty" value="<?php echo htmlspecialchars($admin_specialty); ?>" <?php echo $editMode ? '' : 'disabled'; ?> required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="profileAvailability">Availability:</label>
-                            <textarea id="profileAvailability" rows="2" name="admin_availability" <?php echo $editMode ? '' : 'disabled'; ?>><?php echo htmlspecialchars($admin_availability); ?></textarea>
-                        </div>
-
-
                         <div class="profile-action-buttons">
                             <?php if (!$editMode): ?>
                                 <a href="?section=profile&edit=1" class="button" id="editProfileBtn">Edit Details</a>
@@ -1057,19 +604,11 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
                             <?php endif; ?>
                         </div>
                     </form>
-                    <?php
-                    // Display profile update messages
-                    if (isset($_SESSION['profile_message'])) {
-                        echo '<div id="profileMessage" class="message-box ' . htmlspecialchars($_SESSION['profile_message_type']) . '">' . htmlspecialchars($_SESSION['profile_message']) . '</div>';
-                        unset($_SESSION['profile_message']);
-                        unset($_SESSION['profile_message_type']);
-                    } else {
-                        echo '<div id="profileMessage" class="message-box"></div>';
-                    }
-                    ?>
+                    <div id="adminProfileMessage" class="message-box" style="display: none;"></div>
                 </div>
 
-                <div class="password-change-section">
+
+                <div class="form-section">
                     <h3>Change Password</h3>
                     <form id="passwordChangeForm" method="post" action="../../controller/change_admin_pass_con.php">
                         <input type="hidden" name="admin_id" value="<?php echo htmlspecialchars($admin_id); ?>" />
@@ -1126,6 +665,7 @@ $medicineRoutes = ['Oral', 'Topical', 'Intravenous (IV)', 'Intramuscular (IM)', 
 
 
     <script src="../../assets/admin/adminDash.js"></script>
+    <!-- <script src="../../assets/admin/statusChange.js"></script> -->
 </body>
 
 </html>

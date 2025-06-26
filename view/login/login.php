@@ -1,3 +1,12 @@
+<script>
+  // Check if the page was loaded from the browser cache
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+      window.location.reload();
+    }
+  });
+</script>
+
 <?php
 session_start();
 ?>

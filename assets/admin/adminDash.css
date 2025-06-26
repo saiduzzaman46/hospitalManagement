@@ -317,7 +317,7 @@ footer p {
   background-color: #ffffff;
   border-radius: var(--border-radius-base);
   box-shadow: var(--box-shadow-base);
-  overflow-x: auto;
+  overflow: auto;
   margin-top: 2.4rem;
   border: 0.1rem solid var(--border-color-light);
 }

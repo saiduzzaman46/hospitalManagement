@@ -31,3 +31,13 @@ function delete_doctor_info($conn, $id) {
         return false; 
     }
 }
+
+function delete_appointment_info($conn, $id) {
+    $query = "DELETE FROM `appointments` WHERE `aid` = '$id'";
+    $result = mysqli_query($conn, $query);
+    if ($result) {
+        return true; 
+    } else {
+        return false; 
+    }
+}
